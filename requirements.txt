@@ -1,0 +1,5 @@
+openmim
+torch
+mmcv
+tqdm
+requests
