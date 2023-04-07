@@ -20,9 +20,7 @@ def get_classes(data_path_mm) -> list:
 
 def update_classes(classes_names: list):
     f_names = ["src/mmdetection/mmdet/datasets/voc.py",
-               "src/mmdetection/mmdet/datasets/coco.py",
-               "src/mmdetection/build/lib/mmdet/datasets/coco.py",
-               "src/mmdetection/build/lib/mmdet/datasets/voc.py"]
+               "src/mmdetection/mmdet/datasets/coco.py"]
     for f_name in f_names:
         with open(f_name) as f:
             s = f.read()
@@ -31,8 +29,7 @@ def update_classes(classes_names: list):
                        flags=re.S)
         with open(f_name, 'w') as f:
             f.write(s)
-    f_names = ["src/mmdetection/mmdet/core/evaluation/class_names.py",
-               "src/mmdetection/build/lib/mmdet/core/evaluation/class_names.py"]
+    f_names = ["src/mmdetection/mmdet/core/evaluation/class_names.py"]
     for f_name in f_names:
         with open(f_name) as f:
             s = f.read()

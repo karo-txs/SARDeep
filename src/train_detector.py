@@ -63,5 +63,5 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config-file',  help='configuration path name')
     args = vars(parser.parse_args())
 
-    train = Train("config_faster_rcnn_sard_v1")
+    train = Train("config_yolo_v3_sard_v1")
     train.train_model()

@@ -23,7 +23,26 @@ cd mmdetection
 !pip install -e .
 python setup.py install
 ````
-4. Run setup.sh
+4. Insert our datasets in SARDeep/datasets
+````commandline
+ .
+ ├── datasets
+ │   ├── sard
+ │   │   ├── Annotations
+ │   │   │   ├── gss6.xml
+ │   │   │   ...
+ │   │   ├── ImageSets
+ │   │   │   └── Main
+ │   │   │       ├── test.txt
+ │   │   │       ├── train.txt
+ │   │   │       └── val.txt
+ │   │   └── JPEGImages
+ │   │   │   ├── gss6.jpg
+ │   │   │   ...
+ .
+````
+
+5. Run setup.sh
 ````commandline
 sh setup.sh
 ````

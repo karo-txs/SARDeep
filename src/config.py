@@ -18,7 +18,7 @@ class Configuration:
         with open(f"configs/{file}.json") as f:
             file = json.load(f)
 
-        config = f"""base/configs/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{config_base["project_name"]}.py"""
+        config = f"""base/configs/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
         cfg = Config.fromfile(config)
 
         cfg.load_from = file["fine_tune"]["load_from"]

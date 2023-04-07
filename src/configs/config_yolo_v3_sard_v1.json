@@ -1,15 +1,15 @@
 {
   "version": 1,
   "model": {
-    "name": "faster_rcnn",
-    "version": "default",
+    "name": "yolo",
+    "version": "v3",
     "optimizer": {
-      "lr": 0.01,
+      "lr": 0.001,
       "momentum": 0.9,
       "interval": 5
     },
     "runner": {
-      "max_epochs": 20
+      "max_epochs": 50
     }
   },
   "dataset": {
@@ -17,7 +17,7 @@
     "use": "train|val|test"
   },
   "fine_tune": {
-    "name": "faster_rcnn_r50_fpn_1x_coco",
-    "load_from": "checkpoints/faster_rcnn_r50_fpn_1x_coco.pth"
+    "name": "yolov3_d53_fp16_mstrain-608_273e_coco",
+    "load_from": "checkpoints/yolov3_d53_fp16_mstrain-608_273e_coco.pth"
   }
 }
