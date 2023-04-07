@@ -1,16 +1,17 @@
-from src.config import Configuration
+from mmdet.utils import (collect_env, get_root_logger)
 from mmdet.datasets import build_dataset
 from mmdet.models import build_detector
-from mmdet.apis import init_random_seed, set_random_seed, train_detector
-from mmdet.utils import (collect_env, get_device, get_root_logger,
-                         replace_cfg_vals, rfnext_init_model,
-                         setup_multi_processes, update_data_root)
+from mmdet.apis import train_detector
 from mmcv.utils import get_git_hash
+from dataclasses import dataclass
+from config import Configuration
 from mmdet import __version__
 import os.path as osp
+import argparse
 import time
 
 
+@dataclass
 class Train:
     config_file: str
 
@@ -55,3 +56,12 @@ class Train:
 
         train_detector(model, datasets, self.cfg, distributed=False, validate=True, timestamp=self.timestamp,
                        meta=self.meta)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config-file',  help='configuration path name')
+    args = vars(parser.parse_args())
+
+    train = Train("config_faster_rcnn_sard_v1")
+    train.train_model()

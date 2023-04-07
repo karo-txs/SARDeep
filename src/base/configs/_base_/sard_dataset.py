@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'VOCDataset'
-data_root = 'data/sard/'
+data_root = 'mmdetection/data/sard/'
 CLASSES = ['person']
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -35,18 +35,18 @@ data = dict(
     train=dict(
         type=dataset_type,
         classes=tuple(CLASSES),
-        ann_file=data_root + 'ImageSets/Main/train.txt',
-        img_prefix=data_root,
+        ann_file=data_root + 'VOC2012/ImageSets/Main/train.txt',
+        img_prefix=data_root + "VOC2012",
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         classes=tuple(CLASSES),
-        ann_file=data_root + 'ImageSets/Main/val.txt',
-        img_prefix=data_root,
+        ann_file=data_root + 'VOC2012/ImageSets/Main/val.txt',
+        img_prefix=data_root + "VOC2012",
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         classes=tuple(CLASSES),
-        ann_file=data_root + 'ImageSets/Main/test.txt',
-        img_prefix=data_root,
+        ann_file=data_root + 'VOC2012/ImageSets/Main/test.txt',
+        img_prefix=data_root + "VOC2012",
         pipeline=test_pipeline))

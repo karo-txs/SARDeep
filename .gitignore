@@ -127,7 +127,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-base/mmdetection/
-checkpoints/
+src/mmdetection/
+src/checkpoints/
 datasets/
 .idea/
+results/

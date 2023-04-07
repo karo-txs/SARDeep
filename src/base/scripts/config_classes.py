@@ -3,6 +3,7 @@ import argparse
 import glob
 import re
 
+
 def get_classes(data_path_mm) -> list:
     classes_names = []
     for xml_file in glob.glob(f"datasets/{data_path_mm}/Annotations" + "/*.xml"):
@@ -18,22 +19,27 @@ def get_classes(data_path_mm) -> list:
 
 
 def update_classes(classes_names: list):
-    f_names = ["base/mmdetection/mmdet/datasets/voc.py", "base/mmdetection/mmdet/datasets/coco.py"]
+    f_names = ["src/mmdetection/mmdet/datasets/voc.py",
+               "src/mmdetection/mmdet/datasets/coco.py",
+               "src/mmdetection/build/lib/mmdet/datasets/coco.py",
+               "src/mmdetection/build/lib/mmdet/datasets/voc.py"]
     for f_name in f_names:
         with open(f_name) as f:
             s = f.read()
             s = re.sub('CLASSES = \(.*?\)',
-                       'CLASSES = ({})'.format(", ".join(["\'{}\'".format(name) for name in classes_names])), s,
+                       'CLASSES = ({})'.format(", ".join(["{}".format(name) for name in classes_names])), s,
                        flags=re.S)
         with open(f_name, 'w') as f:
             f.write(s)
-    f_name = "base/mmdetection/mmdet/core/evaluation/class_names.py"
-    with open(f_name) as f:
-        s = f.read()
-        s = re.sub('return \[.*?\]', 'return [{}]'.format(", ".join(["\'{}\'".format(name) for name in classes_names])),
-                   s, flags=re.S)
-    with open(f_name, 'w') as f:
-        f.write(s)
+    f_names = ["src/mmdetection/mmdet/core/evaluation/class_names.py",
+               "src/mmdetection/build/lib/mmdet/core/evaluation/class_names.py"]
+    for f_name in f_names:
+        with open(f_name) as f:
+            s = f.read()
+            s = re.sub("return \[.*?\]", 'return {}'.format(", ".join(["{}".format(name) for name in classes_names])),
+                       s, flags=re.S)
+        with open(f_name, 'w') as f:
+            f.write(s)
 
 
 if __name__ == '__main__':

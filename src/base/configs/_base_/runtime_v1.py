@@ -1,5 +1,5 @@
 checkpoint_config = dict(interval=1)
-seed=0
+seed = 0
 # yapf:disable
 log_config = dict(
     interval=5,
@@ -20,7 +20,7 @@ resume_from = None
 workflow = [('train', 1)]
 
 gpu_ids = range(1)
-device = 'cuda'
+device = 'cpu'
 
 # disable opencv multithreading to avoid system being overloaded
 opencv_num_threads = 0

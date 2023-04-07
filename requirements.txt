@@ -1,5 +1,10 @@
-openmim
-torch
-mmcv
+torch==1.13.1
+torchvision
 tqdm
 requests
+scipy
+terminaltables
+six
+pycocotools
+tensorboard
+opencv-python
