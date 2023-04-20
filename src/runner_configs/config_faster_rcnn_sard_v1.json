@@ -9,7 +9,7 @@
       "interval": 5
     },
     "runner": {
-      "max_epochs": 20
+      "max_epochs": 50
     }
   },
   "dataset": {

@@ -16,7 +16,7 @@ class Train:
     config_file: str
 
     def __post_init__(self):
-        self.cfg = Configuration.parse_file_to_config(self.config_file)
+        self.cfg = Configuration(self.config_file).cfg
         self.timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
         log_file = osp.join(self.cfg.work_dir, f'{self.timestamp}.log')
         logger = get_root_logger(log_file=log_file, log_level=self.cfg.log_level)
@@ -63,5 +63,5 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config-file',  help='configuration path name')
     args = vars(parser.parse_args())
 
-    train = Train("config_yolo_v3_sard_v1")
+    train = Train("config_ssd_sard_v1")
     train.train_model()

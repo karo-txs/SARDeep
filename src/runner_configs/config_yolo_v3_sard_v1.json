@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "model": {
+    "name": "yolo",
+    "version": "v3",
+    "optimizer": {
+      "lr": 0.001,
+      "momentum": 0.9,
+      "interval": 2
+    },
+    "runner": {
+      "max_epochs": 50
+    }
+  },
+  "dataset": {
+    "name": "sard",
+    "use": "train|val|test"
+  },
+  "fine_tune": {
+    "name": "yolov3_d53_fp16_mstrain-608_273e_coco",
+    "load_from": "checkpoints/yolov3_d53_fp16_mstrain-608_273e_coco.pth"
+  }
+}

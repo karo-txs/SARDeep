@@ -1,28 +1,30 @@
-from mmdet.apis import init_random_seed, set_random_seed
 from mmdet.utils import (replace_cfg_vals, setup_multi_processes, update_data_root)
-import os.path as osp
-from dataclasses import dataclass
+from mmdet.apis import init_random_seed, set_random_seed
+from dataclasses import dataclass, field
 from mmcv import Config
+import os.path as osp
 import json
 import mmcv
 
 
 @dataclass
 class Configuration:
+    base_file: str
+    config_file: str = field(default=None)
+    cfg: Config = field(default=None)
 
-    @staticmethod
-    def parse_file_to_config(file: str) -> Config:
-        with open("configs/config_base.json") as f:
+    def __post_init__(self):
+        with open("runner_configs/config_base.json") as f:
             config_base = json.load(f)
 
-        with open(f"configs/{file}.json") as f:
+        with open(f"runner_configs/{self.base_file}.json") as f:
             file = json.load(f)
 
-        config = f"""base/configs/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
-        cfg = Config.fromfile(config)
+        self.config_file = f"""base/configs/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
+        cfg = Config.fromfile(self.config_file)
 
         cfg.load_from = file["fine_tune"]["load_from"]
-        cfg.work_dir = f"""../{config_base["base_work_dir"]}/{file["model"]["name"]}/{file["dataset"]["name"]}"""
+        cfg.work_dir = f"""../{config_base["base_work_dir"]}/{file["model"]["name"]}/{file["model"]["version"]}/{file["dataset"]["name"]}"""
 
         cfg = replace_cfg_vals(cfg)
 
@@ -46,6 +48,6 @@ class Configuration:
         cfg.runner.max_epochs = file["model"]["runner"]["max_epochs"]
 
         # dump config
-        cfg.dump(osp.join(cfg.work_dir, osp.basename(config)))
+        cfg.dump(osp.join(cfg.work_dir, osp.basename(self.config_file)))
 
-        return cfg
+        self.cfg = cfg

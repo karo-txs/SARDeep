@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "model": {
+    "name": "ssd",
+    "version": "default",
+    "optimizer": {
+      "lr": 0.02,
+      "momentum": 0.9,
+      "interval": 5
+    },
+    "runner": {
+      "max_epochs": 50
+    }
+  },
+  "dataset": {
+    "name": "sard",
+    "use": "train|val|test"
+  },
+  "fine_tune": {
+    "name": "ssd512_coco",
+    "load_from": "checkpoints/ssd512_coco.pth"
+  }
+}

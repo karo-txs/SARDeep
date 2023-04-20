@@ -60,6 +60,3 @@ model = dict(
         conf_thr=0.005,
         nms=dict(type='nms', iou_threshold=0.45),
         max_per_img=100))
-
-# fp16 settings
-fp16 = dict(loss_scale='dynamic')
