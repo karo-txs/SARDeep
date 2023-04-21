@@ -1,12 +1,12 @@
 {
   "version": 1,
   "model": {
-    "name": "faster_rcnn",
-    "version": "default",
+    "name": "yolo",
+    "version": "x",
     "optimizer": {
       "lr": 0.01,
       "momentum": 0.9,
-      "interval": 5
+      "interval": 2
     },
     "runner": {
       "max_epochs": 50
@@ -17,7 +17,7 @@
     "use": "train|val|test"
   },
   "fine_tune": {
-    "name": "faster_rcnn_r50_fpn_1x_coco",
-    "load_from": "checkpoints/faster_rcnn_r50_fpn_1x_coco.pth"
+    "name": "yolox_x_8x8_300e_coco",
+    "load_from": "infra/checkpoints/yolox_x_8x8_300e_coco.pth"
   }
 }

@@ -22,12 +22,12 @@ for i in ${checkpoints//,/ }
   do
     if [ ! -d "checkpoints/$i" ]; then
       echo "Downloading: $i"
-      python src/base/scripts/download_weights.py --weights $i
+      python src/infra/scripts/download_weights.py --weights $i
     fi
   done
 
 echo "3/3 Classes configuration"
-python src/base/scripts/config_classes.py
+python src/infra/scripts/config_classes.py
 
 
 

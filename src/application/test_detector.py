@@ -1,11 +1,11 @@
 from mmdet.utils import (get_device, replace_cfg_vals, update_data_root, compat_cfg, build_dp)
 from mmdet.datasets import (build_dataloader, replace_ImageToTensor)
 from mmcv.runner import (get_dist_info, load_checkpoint)
+from src.infra.configs.config import Configuration
 from mmdet.apis import single_gpu_test
 from mmdet.datasets import build_dataset
 from mmdet.models import build_detector
 from dataclasses import dataclass, field
-from config import Configuration
 import os.path as osp
 import argparse
 import mmcv

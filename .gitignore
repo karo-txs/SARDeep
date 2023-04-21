@@ -128,7 +128,9 @@ dmypy.json
 .pyre/
 
 src/mmdetection/
-src/checkpoints/
+src/infra/checkpoints/
 datasets/
 .idea/
 results/
+resource/*.json
+#resource/*.yaml

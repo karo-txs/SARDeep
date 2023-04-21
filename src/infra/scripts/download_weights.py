@@ -5,7 +5,7 @@ import argparse
 
 
 def download_weights(url, file_save_name):
-    data_dir = "src/checkpoints/"
+    data_dir = "src/infra/checkpoints/"
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
     # Download the file if not present.
@@ -29,7 +29,7 @@ def download_weights(url, file_save_name):
 
 
 def parse_meta_file():
-    weigths = open("src/base/scripts/weights.txt", "r")
+    weigths = open("src/infra/scripts/weights.txt", "r")
     data = weigths.read()
     data_into_list = data.split('\n')
     return data_into_list

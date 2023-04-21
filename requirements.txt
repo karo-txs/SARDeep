@@ -8,3 +8,5 @@ six
 pycocotools
 tensorboard
 opencv-python
+PyDrive
+yaml

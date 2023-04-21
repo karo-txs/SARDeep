@@ -14,13 +14,13 @@ class Configuration:
     cfg: Config = field(default=None)
 
     def __post_init__(self):
-        with open("runner_configs/config_base.json") as f:
+        with open("run/config_base.json") as f:
             config_base = json.load(f)
 
-        with open(f"runner_configs/{self.base_file}.json") as f:
+        with open(f"run/{self.base_file}.json") as f:
             file = json.load(f)
 
-        self.config_file = f"""base/configs/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
+        self.config_file = f"""infra/configs/base/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
         cfg = Config.fromfile(self.config_file)
 
         cfg.load_from = file["fine_tune"]["load_from"]
