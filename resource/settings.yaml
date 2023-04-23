@@ -13,5 +13,7 @@ save_credentials_file: <STORAGE PATH, e.g. /usr/local/scripts/pydrive/credential
 
 get_refresh_token: True
 
+base_folder_id: <BASE FOLDER ID>
+
 oauth_scope:
   - https://www.googleapis.com/auth/drive.file

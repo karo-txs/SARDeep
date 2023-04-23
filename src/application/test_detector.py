@@ -2,10 +2,10 @@ from mmdet.utils import (get_device, replace_cfg_vals, update_data_root, compat_
 from mmdet.datasets import (build_dataloader, replace_ImageToTensor)
 from mmcv.runner import (get_dist_info, load_checkpoint)
 from src.infra.configs.config import Configuration
-from mmdet.apis import single_gpu_test
+from dataclasses import dataclass, field
 from mmdet.datasets import build_dataset
 from mmdet.models import build_detector
-from dataclasses import dataclass, field
+from mmdet.apis import single_gpu_test
 import os.path as osp
 import argparse
 import mmcv
@@ -128,5 +128,5 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--epoch', help='checkpoint epoch')
     args = vars(parser.parse_args())
 
-    test = Test(config_file="config_faster_rcnn_sard_v1", epoch=50)
+    test = Test(config_file="config_fcos_sard_v1", epoch=1)
     test.test_model()

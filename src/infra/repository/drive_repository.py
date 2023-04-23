@@ -4,8 +4,9 @@ import yaml
 import json
 
 
-class Repository:
+class DriveRepository:
     def __init__(self):
+        self.folder_id = "drive.google.com/drive/u/3/folders/1veMpzxUr9MIWrbdDPpNaUTfYiOlr9TcZ"
         self.resource_path = "../../../resource"
         settings_file = f"{self.resource_path}/settings.yaml"
         settings = open(settings_file, "r")
@@ -25,3 +26,22 @@ class Repository:
         g_auth.LocalWebserverAuth()
         self.drive = GoogleDrive(g_auth)
 
+    def create_folder(self, folder_name: str):
+        file_metadata = {
+            'title': folder_name,
+            'parents': [{'id': self.folder_id}],
+            'mimeType': 'application/vnd.google-apps.folder'
+        }
+
+        folder = self.drive.CreateFile(file_metadata)
+        folder.Upload()
+
+    def upload_file(self, file_name: str):
+        file_metadata = {
+            'title': folder_name,
+            'parents': [{'id': self.folder_id}],
+            'mimeType': 'application/vnd.google-apps.folder'
+        }
+
+        folder = self.drive.CreateFile(file_metadata)
+        folder.Upload()

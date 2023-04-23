@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "model": {
+    "name": "fcos",
+    "version": "default",
+    "optimizer": {
+      "lr": 0.01,
+      "momentum": 0.9,
+      "interval": 5
+    },
+    "runner": {
+      "max_epochs": 50
+    }
+  },
+  "dataset": {
+    "name": "sard",
+    "use": "train|val|test"
+  },
+  "fine_tune": {
+    "name": "fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco",
+    "load_from": "infra/checkpoints/fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco.pth"
+  }
+}

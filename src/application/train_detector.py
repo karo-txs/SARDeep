@@ -1,10 +1,10 @@
 from mmdet.utils import (collect_env, get_root_logger)
+from src.infra.configs.config import Configuration
 from mmdet.datasets import build_dataset
 from mmdet.models import build_detector
 from mmdet.apis import train_detector
 from mmcv.utils import get_git_hash
 from dataclasses import dataclass
-from config import Configuration
 from mmdet import __version__
 import os.path as osp
 import argparse

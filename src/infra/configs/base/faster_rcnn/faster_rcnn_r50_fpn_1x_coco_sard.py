@@ -1,7 +1,7 @@
 _base_ = [
-    '../_base_/runtime_v1.py',
-    '../_base_/schedule_2x.py',
-    '../_base_/sard_dataset.py',
+    '../_base_/runtime/runtime_v1.py',
+    '../_base_/schedules/schedule_2x.py',
+    '../_base_/datasets/sard_dataset.py',
 ]
 num_classes = 1
 # model settings

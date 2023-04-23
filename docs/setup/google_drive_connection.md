@@ -9,4 +9,3 @@
 5. Configure your credential and download json:
 ![image](https://user-images.githubusercontent.com/58193125/233703597-e76698f3-6cbf-4e46-ae29-ee1fc23f376e.png)
 6. Upload your client_secrets in SARDeep/resource
-7. create your settings file accordingly: [settings.yaml](https://github.com/iterative/PyDrive2/blob/main/examples/Upload-and-autoconvert-to-Google-Drive-Format-Example/settings.yaml)

@@ -5,6 +5,7 @@ from mmcv import Config
 import os.path as osp
 import json
 import mmcv
+import os
 
 
 @dataclass
@@ -14,17 +15,18 @@ class Configuration:
     cfg: Config = field(default=None)
 
     def __post_init__(self):
-        with open("run/config_base.json") as f:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        with open(f"{base_path}/run/config_base.json") as f:
             config_base = json.load(f)
 
-        with open(f"run/{self.base_file}.json") as f:
+        with open(f"{base_path}/run/{self.base_file}.json") as f:
             file = json.load(f)
 
-        self.config_file = f"""infra/configs/base/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
+        self.config_file = f"""../infra/configs/base/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
         cfg = Config.fromfile(self.config_file)
 
         cfg.load_from = file["fine_tune"]["load_from"]
-        cfg.work_dir = f"""../{config_base["base_work_dir"]}/{file["model"]["name"]}/{file["model"]["version"]}/{file["dataset"]["name"]}"""
+        cfg.work_dir = f"""../../{config_base["base_work_dir"]}/{file["model"]["name"]}/{file["model"]["version"]}/{file["dataset"]["name"]}"""
 
         cfg = replace_cfg_vals(cfg)
 
