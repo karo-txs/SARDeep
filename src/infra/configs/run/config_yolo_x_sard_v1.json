@@ -9,7 +9,7 @@
       "interval": 2
     },
     "runner": {
-      "max_epochs": 50
+      "max_epochs": 1
     }
   },
   "dataset": {
@@ -18,6 +18,6 @@
   },
   "fine_tune": {
     "name": "yolox_x_8x8_300e_coco",
-    "load_from": "infra/checkpoints/yolox_x_8x8_300e_coco.pth"
+    "load_from": "../../infra/checkpoints/yolox_x_8x8_300e_coco.pth"
   }
 }

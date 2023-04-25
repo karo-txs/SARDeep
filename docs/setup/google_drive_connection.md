@@ -11,9 +11,7 @@
 6. Upload your client_secrets in SARDeep/resource
 7. Get your base folder id:
 ![image](https://user-images.githubusercontent.com/58193125/233854152-c4039a58-77e3-4725-a001-fccc8d4e1ee0.png)
-8. Insert in settings.yaml
-
-![image](https://user-images.githubusercontent.com/58193125/233854173-28b1cc81-e4ec-4e68-8100-bef3c24e83d4.png)
+8. Insert in [settings.yaml](https://github.com/iterative/PyDrive2/blob/main/examples/Upload-and-autoconvert-to-Google-Drive-Format-Example/settings.yaml) in resources.
 9. Add google drive in apis and services:
 ![image](https://user-images.githubusercontent.com/58193125/233854904-4b6add96-6523-4849-acfc-c8d8de2343dc.png)
 10. Add your e-mail as one of the test users:

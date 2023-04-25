@@ -44,5 +44,5 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config-file', help='configuration path name')
     args = vars(parser.parse_args())
 
-    train = Train(config_file="config_ssd_sard_v1")
+    train = Train(config_file="config_yolo_x_sard_v1")
     train.run_step()

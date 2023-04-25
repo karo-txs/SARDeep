@@ -12,7 +12,7 @@ num_last_epochs = 15
 
 # learning policy
 lr_config = dict(
-    _delete_=True,
+    #_delete_=True,
     policy='YOLOX',
     warmup='exp',
     by_epoch=False,
