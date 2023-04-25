@@ -1,19 +1,15 @@
-client_config_backend: settings
+base_folder_id: 1veMpzxUr9MIWrbdDPpNaUTfYiOlr9TcZ
 client_config:
-  client_id: <INSERT YOUR CLIENT_ID HERE>
-  client_secret: <INSERT YOUR SECRET HERE>
   auth_uri: https://accounts.google.com/o/oauth2/auth
-  token_uri: https://oauth2.googleapis.com/token
+  client_id: 844607211323-5tabhi8ivpabs8sdcbk7r3vh6hrfvumn.apps.googleusercontent.com
+  client_secret: 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
   redirect_uri: urn:ietf:wg:oauth:2.0:oob
-  revoke_uri:
-
-save_credentials: True
-save_credentials_backend: file
-save_credentials_file: <STORAGE PATH, e.g. /usr/local/scripts/pydrive/credentials.json>
-
-get_refresh_token: True
-
-base_folder_id: <BASE FOLDER ID>
-
+  revoke_uri: null
+  token_uri: https://oauth2.googleapis.com/token
+client_config_backend: settings
+get_refresh_token: true
 oauth_scope:
-  - https://www.googleapis.com/auth/drive.file
+- https://www.googleapis.com/auth/drive.file
+save_credentials: true
+save_credentials_backend: file
+save_credentials_file: C:\Users\karol\Documents\TCC\SARDeep\src\infra\repository/../../../resource/credentials.json

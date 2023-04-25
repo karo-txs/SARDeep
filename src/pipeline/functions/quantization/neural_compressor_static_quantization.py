@@ -1,0 +1,2 @@
+from neural_compressor import PostTrainingQuantConfig
+from optimum.intel.neural_compressor import INCQuantizer

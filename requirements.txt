@@ -1,4 +1,6 @@
+optimum[neural-compressor]
 torch==1.13.1
+httplib2==0.15.0
 torchvision
 tqdm
 requests
@@ -9,4 +11,3 @@ pycocotools
 tensorboard
 opencv-python
 PyDrive
-yaml
