@@ -13,49 +13,60 @@ import os
 
 @dataclass
 class Configuration:
-    base_file: str
-    config_file: str = field(default=None)
+    base_file: dict
     cfg: Config = field(default=None)
 
     def __post_init__(self):
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        with open(f"{base_path}/run/config_base.json") as f:
-            config_base = json.load(f)
+        config_file = f"""../src/infra/configs/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
+        self.cfg = Config.fromfile(config_file)
 
-        with open(f"{base_path}/run/{self.base_file}.json") as f:
-            file = json.load(f)
+        self.cfg.load_from = self.base_file["fine_tune"]["load_from"]
+        self.cfg.work_dir = f"""../../results/{self.base_file["name"]}/{self.base_file["version"]}/{self.base_file["datasets"]["train"]}/{self.base_file["datasets"]["test"]}"""
 
-        self.config_file = f"""../../infra/configs/base/{file["model"]["name"]}/{file["fine_tune"]["name"]}_{file["dataset"]["name"]}.py"""
-        cfg = Config.fromfile(self.config_file)
+        self.config_dataset()
 
-        cfg.load_from = file["fine_tune"]["load_from"]
-        cfg.work_dir = f"""../../../{config_base["base_work_dir"]}/{file["model"]["name"]}/{file["model"]["version"]}/{file["dataset"]["name"]}"""
-
-        cfg = replace_cfg_vals(cfg)
+        self.cfg = replace_cfg_vals(self.cfg)
 
         # update data root according to MMDET_DATASETS
-        update_data_root(cfg)
+        update_data_root(self.cfg)
 
         # set multi-process settings
-        setup_multi_processes(cfg)
+        setup_multi_processes(self.cfg)
 
-        cfg.optimizer.lr = file["model"]["optimizer"]["lr"]
-        cfg.optimizer.momentum = file["model"]["optimizer"]["momentum"]
+        self.cfg.optimizer.lr = self.base_file["optimizer"]["lr"]
+        self.cfg.optimizer.momentum = self.base_file["optimizer"]["momentum"]
 
-        cfg.checkpoint_config.interval = file["model"]["optimizer"]["interval"]
+        self.cfg.checkpoint_config.interval = self.base_file["optimizer"]["interval"]
 
-        mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
+        mmcv.mkdir_or_exist(osp.abspath(self.cfg.work_dir))
 
         # Set random seed for reproducible results.
-        seed = init_random_seed(0, device=cfg.device)
+        seed = init_random_seed(0, device=self.cfg.device)
         set_random_seed(seed)
-        cfg.seed = seed
-        cfg.runner.max_epochs = file["model"]["runner"]["max_epochs"]
+        self.cfg.seed = seed
+        self.cfg.runner.max_epochs = self.base_file["runner"]["max_epochs"]
 
         # dump config
-        cfg.dump(osp.join(cfg.work_dir, osp.basename(self.config_file)))
+        self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(config_file)))
 
-        self.cfg = cfg
+    def config_dataset(self):
+        data_root = 'mmdetection/data'
+        ann_file = "VOC2012/ImageSets/Main"
+        img_prefix = "VOC2012"
+
+        train_data_path = f"""{data_root}/{self.base_file["datasets"]["train"]}"""
+        self.cfg.data_root = train_data_path
+
+        self.cfg.data.train.ann_file = f"""{train_data_path}/{ann_file}/train.txt"""
+        self.cfg.data.train.img_prefix = f"""{train_data_path}/{img_prefix}"""
+
+        test_data_path = f"""{data_root}/{self.base_file["datasets"]["test"]}"""
+        self.cfg.data.test.ann_file = f"""{test_data_path}/{ann_file}/test.txt"""
+        self.cfg.data.test.img_prefix = f"""{test_data_path}/{img_prefix}"""
+
+        val_data_path = f"""{data_root}/{self.base_file["datasets"]["val"]}"""
+        self.cfg.data.val.ann_file = f"""{val_data_path}/{ann_file}/val.txt"""
+        self.cfg.data.val.img_prefix = f"""{val_data_path}/{img_prefix}"""
 
     def load_config_for_train(self) -> dict:
         timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())

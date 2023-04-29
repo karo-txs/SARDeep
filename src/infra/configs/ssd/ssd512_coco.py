@@ -1,7 +1,7 @@
 _base_ = [
     '../_base_/runtime/runtime_v1.py',
     '../_base_/schedules/schedule_2x.py',
-    '../_base_/datasets/sard_dataset.py',
+    '../_base_/datasets/dataset.py',
 ]
 input_size = 512
 model = dict(

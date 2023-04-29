@@ -1,0 +1,36 @@
+{
+  "models": [
+    {
+      "name": "faster_rcnn",
+      "version": "",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 5
+      },
+      "runner": {
+        "max_epochs": 50
+      },
+      "fine_tune": {
+        "name": "faster_rcnn_r50_fpn_1x_coco",
+        "load_from": "infra/checkpoints/faster_rcnn_r50_fpn_1x_coco.pth"
+      }
+    },
+    {
+      "name": "yolo",
+      "version": "v3",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 5
+      },
+      "runner": {
+        "max_epochs": 50
+      },
+      "fine_tune": {
+        "name": "yolov3_d53_fp16_mstrain-608_273e_coco",
+        "load_from": "infra/checkpoints/yolov3_d53_fp16_mstrain-608_273e_coco.pth"
+      }
+    }
+  ]
+}

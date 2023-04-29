@@ -10,14 +10,13 @@ class DatasetLoader:
     cfg: Config = field(default=None)
 
     def load_dataset(self, split: str = "test_dataloader") -> Tuple[Dataset, DataLoader]:
-        test_dataloader_default_args = dict(
-            samples_per_gpu=1, workers_per_gpu=2, dist=False, shuffle=False)
+        dataloader_default_args = dict(samples_per_gpu=1, workers_per_gpu=2, dist=False, shuffle=False)
 
-        test_loader_cfg = {
-            **test_dataloader_default_args,
+        loader_cfg = {
+            **dataloader_default_args,
             **self.cfg.data.get(split, {})
         }
 
         dataset = build_dataset(self.cfg.data.test)
-        data_loader = build_dataloader(dataset, **test_loader_cfg)
+        data_loader = build_dataloader(dataset, **loader_cfg)
         return dataset, data_loader
