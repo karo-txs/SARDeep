@@ -2,7 +2,7 @@
   "project_name": "SARDeep",
   "pipeline_id": "0.0.1",
   "models": [
-        "yolov3"
+        "fcos"
       ],
   "datasets": [
         {

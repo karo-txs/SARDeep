@@ -1,6 +1,6 @@
 _base_ = [
     '../_base_/runtime/runtime_v1.py',
-    '../_base_/schedules/schedule_2x.py',
+    '../_base_/schedules/schedule_1x.py',
     '../_base_/datasets/dataset.py',
 ]
 num_classes = 1
@@ -60,3 +60,18 @@ model = dict(
         conf_thr=0.005,
         nms=dict(type='nms', iou_threshold=0.45),
         max_per_img=100))
+fp16 = dict(loss_scale='dynamic')
+# optimizer
+optimizer = dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0005)
+optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+# learning policy
+lr_config = dict(
+    policy='step',
+    warmup='linear',
+    warmup_iters=2000,  # same as burn-in in darknet
+    warmup_ratio=0.1,
+    step=[218, 246])
+# NOTE: `auto_scale_lr` is for automatically scaling LR,
+# USER SHOULD NOT CHANGE ITS VALUES.
+# base_batch_size = (8 GPUs) x (8 samples per GPU)
+auto_scale_lr = dict(base_batch_size=64)

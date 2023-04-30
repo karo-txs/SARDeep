@@ -1,14 +1,18 @@
+runner = dict(type='EpochBasedRunner', max_epochs=50)
+evaluation = dict(interval=1, metric=['mAP'])
+
 checkpoint_config = dict(interval=5)
 seed = 0
-# yapf:disable
 log_config = dict(
     interval=5,
     hooks=[
         dict(type='TextLoggerHook'),
         dict(type='TensorboardLoggerHook')
     ])
-# yapf:enable
-custom_hooks = [dict(type='NumClassCheckHook')]
+custom_hooks = [
+    dict(type='NumClassCheckHook'),
+    dict(type='CheckInvalidLossHook', interval=20, priority='VERY_LOW')
+]
 
 dist_params = dict(backend='nccl')
 log_level = 'INFO'

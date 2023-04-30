@@ -8,7 +8,6 @@ from src.interfaces.step import Step
 from mmdet.utils import build_dp
 from typing import List
 import os.path as osp
-import argparse
 import mmcv
 import time
 
@@ -68,13 +67,3 @@ class Test(Step):
                 metric = dataset.evaluate(outputs, **eval_kwargs)
                 metric_dict = dict(config=config.config_file, metric=metric)
                 mmcv.dump(metric_dict, json_file)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config-file', help='configuration path name')
-    parser.add_argument('-e', '--epoch', help='checkpoint epoch')
-    args = vars(parser.parse_args())
-
-    test = Test(config_file="config_faster_rcnn_sard_v1")
-    test.run_step()

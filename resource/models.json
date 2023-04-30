@@ -31,6 +31,38 @@
         "name": "yolov3_d53_fp16_mstrain-608_273e_coco",
         "load_from": "infra/checkpoints/yolov3_d53_fp16_mstrain-608_273e_coco.pth"
       }
+    },
+    {
+      "name": "cascade_rcnn",
+      "version": "",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 5
+      },
+      "runner": {
+        "max_epochs": 50
+      },
+      "fine_tune": {
+        "name": "detectors_cascade_rcnn_r50_1x_coco",
+        "load_from": "infra/checkpoints/detectors_cascade_rcnn_r50_1x_coco.pth"
+      }
+    },
+    {
+      "name": "fcos",
+      "version": "",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 5
+      },
+      "runner": {
+        "max_epochs": 50
+      },
+      "fine_tune": {
+        "name": "fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco",
+        "load_from": "infra/checkpoints/fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco.pth"
+      }
     }
   ]
 }

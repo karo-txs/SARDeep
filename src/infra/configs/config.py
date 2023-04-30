@@ -14,11 +14,12 @@ import os
 @dataclass
 class Configuration:
     base_file: dict
+    config_file: str = field(default=None)
     cfg: Config = field(default=None)
 
     def __post_init__(self):
-        config_file = f"""../src/infra/configs/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
-        self.cfg = Config.fromfile(config_file)
+        self.config_file = f"""../src/infra/configs/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
+        self.cfg = Config.fromfile(self.config_file)
 
         self.cfg.load_from = self.base_file["fine_tune"]["load_from"]
         self.cfg.work_dir = f"""../../results/{self.base_file["name"]}/{self.base_file["version"]}/{self.base_file["datasets"]["train"]}/{self.base_file["datasets"]["test"]}"""
@@ -47,26 +48,38 @@ class Configuration:
         self.cfg.runner.max_epochs = self.base_file["runner"]["max_epochs"]
 
         # dump config
-        self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(config_file)))
+        self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(self.config_file)))
 
     def config_dataset(self):
         data_root = 'mmdetection/data'
-        ann_file = "VOC2012/ImageSets/Main"
-        img_prefix = "VOC2012"
 
-        train_data_path = f"""{data_root}/{self.base_file["datasets"]["train"]}"""
-        self.cfg.data_root = train_data_path
+        if self.cfg.dataset_type == "VOCDataset":
+            type = "VOC2012"
+            ann_file = "DATA_PATH/ImageSets/Main/SPLIT.txt"
+            img_prefix = "DATA_PATH"
 
-        self.cfg.data.train.ann_file = f"""{train_data_path}/{ann_file}/train.txt"""
-        self.cfg.data.train.img_prefix = f"""{train_data_path}/{img_prefix}"""
+        elif self.cfg.dataset_type == "CocoDataset":
+            type = "coco"
+            ann_file = "DATA_PATH/annotations/instances_SPLIT2017.json"
+            img_prefix = "DATA_PATH/images/SPLIT2017"
 
-        test_data_path = f"""{data_root}/{self.base_file["datasets"]["test"]}"""
-        self.cfg.data.test.ann_file = f"""{test_data_path}/{ann_file}/test.txt"""
-        self.cfg.data.test.img_prefix = f"""{test_data_path}/{img_prefix}"""
+        train_data_path = f"""{data_root}/{self.base_file["datasets"]["train"]}/{type}"""
+        train_ann = ann_file.replace("DATA_PATH", train_data_path)
+        train_img_prefix = img_prefix.replace("DATA_PATH", train_data_path)
+        self.cfg.data.train.ann_file = train_ann.replace("SPLIT", "train")
+        self.cfg.data.train.img_prefix = train_img_prefix.replace("SPLIT", "train")
 
-        val_data_path = f"""{data_root}/{self.base_file["datasets"]["val"]}"""
-        self.cfg.data.val.ann_file = f"""{val_data_path}/{ann_file}/val.txt"""
-        self.cfg.data.val.img_prefix = f"""{val_data_path}/{img_prefix}"""
+        test_data_path = f"""{data_root}/{self.base_file["datasets"]["test"]}/{type}"""
+        test_ann = ann_file.replace("DATA_PATH", test_data_path)
+        test_img_prefix = img_prefix.replace("DATA_PATH", train_data_path)
+        self.cfg.data.test.ann_file = test_ann.replace("SPLIT", "test")
+        self.cfg.data.test.img_prefix = test_img_prefix.replace("SPLIT", "test")
+
+        val_data_path = f"""{data_root}/{self.base_file["datasets"]["val"]}/{type}"""
+        val_ann = ann_file.replace("DATA_PATH", val_data_path)
+        val_img_prefix = img_prefix.replace("DATA_PATH", train_data_path)
+        self.cfg.data.val.ann_file = val_ann.replace("SPLIT", "val")
+        self.cfg.data.val.img_prefix = val_img_prefix.replace("SPLIT", "val")
 
     def load_config_for_train(self) -> dict:
         timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())

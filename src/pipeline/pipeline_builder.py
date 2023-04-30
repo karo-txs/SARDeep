@@ -3,7 +3,6 @@ from src.interfaces.step import Step
 from src.pipeline.steps import *
 from typing import List
 import json
-import os
 
 
 @dataclass
