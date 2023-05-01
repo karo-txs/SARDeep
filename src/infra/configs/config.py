@@ -81,6 +81,11 @@ class Configuration:
         self.cfg.data.val.ann_file = val_ann.replace("SPLIT", "val")
         self.cfg.data.val.img_prefix = val_img_prefix.replace("SPLIT", "val")
 
+        if self.cfg.data.train.type == "MultiImageMixDataset":
+            self.cfg.data.train.pop("classes")
+            self.cfg.data.train.pop("ann_file")
+            self.cfg.data.train.pop("img_prefix")
+
     def load_config_for_train(self) -> dict:
         timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
         log_file = osp.join(self.cfg.work_dir, f'{timestamp}.log')

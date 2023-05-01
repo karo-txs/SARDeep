@@ -4,6 +4,7 @@ _base_ = [
     '../_base_/datasets/coco_dataset.py',
 ]
 input_size = 512
+num_classes = 1
 model = dict(
     type='SingleStageDetector',
     backbone=dict(
@@ -16,23 +17,27 @@ model = dict(
         init_cfg=dict(
             type='Pretrained', checkpoint='open-mmlab://vgg16_caffe')),
     neck=dict(
+        type='SSDNeck',
+        in_channels=(512, 1024),
         out_channels=(512, 1024, 512, 256, 256, 256, 256),
         level_strides=(2, 2, 2, 2, 1),
         level_paddings=(1, 1, 1, 1, 1),
         last_kernel_size=4),
     bbox_head=dict(
+        type='SSDHead',
         in_channels=(512, 1024, 512, 256, 256, 256, 256),
+        num_classes=num_classes,
         anchor_generator=dict(
             type='SSDAnchorGenerator',
             scale_major=False,
             input_size=input_size,
             basesize_ratio_range=(0.1, 0.9),
             strides=[8, 16, 32, 64, 128, 256, 512],
-            ratios=[[2], [2, 3], [2, 3], [2, 3], [2, 3], [2], [2]])),
+            ratios=[[2], [2, 3], [2, 3], [2, 3], [2, 3], [2], [2]]),
         bbox_coder=dict(
             type='DeltaXYWHBBoxCoder',
             target_means=[.0, .0, .0, .0],
-            target_stds=[0.1, 0.1, 0.2, 0.2]),
+            target_stds=[0.1, 0.1, 0.2, 0.2])),
     # model training and testing settings
     train_cfg=dict(
         assigner=dict(

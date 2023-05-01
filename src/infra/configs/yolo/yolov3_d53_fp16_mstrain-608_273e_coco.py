@@ -1,7 +1,7 @@
 _base_ = [
     '../_base_/runtime/runtime_v1.py',
     '../_base_/schedules/schedule_1x.py',
-    '../_base_/datasets/dataset.py',
+    '../_base_/datasets/voc_dataset.py',
 ]
 num_classes = 1
 # model settings
