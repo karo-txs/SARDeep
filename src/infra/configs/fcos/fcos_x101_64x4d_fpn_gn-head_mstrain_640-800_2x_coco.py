@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/datasets/coco_dataset.py',
+    '../_base_/data/coco_dataset.py',
     '../_base_/schedules/schedule_1x.py',
     '../_base_/runtime/runtime_v1.py'
 ]

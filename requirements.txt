@@ -1,5 +1,5 @@
 optimum[neural-compressor]
-torch==1.13.1
+torch
 httplib2==0.15.0
 torchvision
 tqdm

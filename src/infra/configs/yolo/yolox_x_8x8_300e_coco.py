@@ -1,7 +1,7 @@
 _base_ = [
     '../_base_/runtime/runtime_v1.py',
     '../_base_/schedules/schedule_1x.py',
-    '../_base_/datasets/coco_dataset.py',
+    '../_base_/data/coco_dataset.py',
 ]
 num_classes = 1
 img_scale = (640, 640)  # height, width

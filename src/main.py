@@ -1,6 +1,10 @@
-from src.pipeline.pipeline_builder import PipelineBuilder
 import argparse
+import os, sys
 
+absolute_path = os.path.abspath(__file__)
+sys.path.append("/".join(os.path.dirname(absolute_path).split("/")[:-1]))
+
+from src.pipeline.pipeline_builder import PipelineBuilder
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

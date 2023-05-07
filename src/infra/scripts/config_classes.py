@@ -6,7 +6,8 @@ import re
 
 def get_classes(data_path_mm) -> list:
     classes_names = []
-    for xml_file in glob.glob(f"datasets/{data_path_mm}/Annotations" + "/*.xml"):
+    print(data_path, data_path_mm)
+    for xml_file in glob.glob(f"{data_path}/{data_path_mm}/VOC2012/Annotations" + "/*.xml"):
         tree = ET.parse(xml_file)
         root = tree.getroot()
         for member in root.findall("object"):
@@ -19,8 +20,8 @@ def get_classes(data_path_mm) -> list:
 
 
 def update_classes(classes_names: list):
-    f_names = ["src/mmdetection/mmdet/datasets/voc.py",
-               "src/mmdetection/mmdet/datasets/coco.py"]
+    f_names = [f"{base_dir}/mmdetection/mmdet/datasets/voc.py",
+               f"{base_dir}/mmdetection/mmdet/datasets/coco.py"]
     for f_name in f_names:
         with open(f_name) as f:
             s = f.read()
@@ -29,7 +30,7 @@ def update_classes(classes_names: list):
                        flags=re.S)
         with open(f_name, 'w') as f:
             f.write(s)
-    f_names = ["src/mmdetection/mmdet/core/evaluation/class_names.py"]
+    f_names = [f"{base_dir}/mmdetection/mmdet/core/evaluation/class_names.py"]
     for f_name in f_names:
         with open(f_name) as f:
             s = f.read()
@@ -42,7 +43,15 @@ def update_classes(classes_names: list):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--datasets', default='sard', help='dataset path name')
+    parser.add_argument('-b', '--base-dir', default='/content/SARDeep/src', help='base dir')
+    parser.add_argument('-p', '--data-path', default='/content/drive/MyDrive/UNICAP/TCC/research/datasets', help='datasets path')
     args = vars(parser.parse_args())
+
+    global base_dir
+    base_dir = args['base_dir']
+
+    global data_path
+    data_path = args['data_path']
 
     classes = get_classes(args["datasets"])
     update_classes([classes])
