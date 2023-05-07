@@ -50,9 +50,14 @@ class PipelineBuilder:
             if "val" in dataset["use"]:
                 model_dict["datasets"]["val"] = dataset["name"]
 
-    def run(self):
+    def run_all(self):
         for step in self.steps:
             step.run_step()
+
+    def run_by_step_name(self, step_name: str):
+        for step in self.steps:
+            if step.name == step_name:
+                step.run_step()
 
     def reset(self):
         self.steps = []

@@ -1,5 +1,5 @@
 #!/bin/bash
-datasets=sard
+datasets=heridal
 dataset_path=datasets
 checkpoints=retinanet_r18_fpn_1x_coco,centernet_resnet18_140e_coco,fovea_r50_fpn_4x4_1x_coco,ddod_r50_fpn_1x_coco
 labels=person
