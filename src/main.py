@@ -10,7 +10,7 @@ if __name__ == "__main__":
     pipeline = PipelineBuilder()
     pipeline.prepare_steps()
 
-    if args["step"]:
+    if args["step"] and args["step"] != "All":
         pipeline.run_by_step_name(args["step"])
     else:
         pipeline.run_all()
