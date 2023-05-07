@@ -22,7 +22,7 @@ class Configuration:
         self.cfg = Config.fromfile(self.config_file)
 
         self.cfg.load_from = self.base_file["fine_tune"]["load_from"]
-        self.cfg.work_dir = f"""../../results/{self.base_file["name"]}/{self.base_file["version"]}/{self.base_file["datasets"]["train"]}/{self.base_file["datasets"]["test"]}"""
+        self.cfg.work_dir = f"""../../{self.base_file["work_dir"]}/{self.base_file["name"]}/{self.base_file["version"]}/{self.base_file["datasets"]["train"]}/{self.base_file["datasets"]["test"]}"""
 
         self.config_dataset()
 

@@ -18,12 +18,13 @@ class PipelineBuilder:
 
         self._add_model_config(pipeline_json)
 
-        for step in pipeline_json["steps"]:
-            if step["name"] == "TestDetectorStep":
-                self.steps.append(Test(models=pipeline_json["models"], **step))
+        for model in pipeline_json["models"]:
+            for step in pipeline_json["steps"]:
+                if step["name"] == "TestDetectorStep":
+                    self.steps.append(Test(model=model, **step))
 
-            elif step["name"] == "TrainDetectorStep":
-                self.steps.append(Train(models=pipeline_json["models"], **step))
+                elif step["name"] == "TrainDetectorStep":
+                    self.steps.append(Train(model=model, **step))
 
     def _add_model_config(self, pipeline: dict):
         with open(f"../resource/models.json") as f:
@@ -33,6 +34,7 @@ class PipelineBuilder:
             for model_dict in models_json["models"]:
                 if f"""{model_dict["name"]}{model_dict["version"]}""" == model_name:
                     self._add_dataset_config(model_dict, pipeline)
+                    model_dict["work_dir"] = pipeline["work_dir"]
                     pipeline["models"][idx] = model_dict
 
     def _add_dataset_config(self, model_dict: dict, pipeline: dict):

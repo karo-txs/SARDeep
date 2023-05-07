@@ -14,56 +14,54 @@ import time
 
 @dataclass
 class Test(Step):
-    models: List[dict] = field(default=None)
+    model: dict = field(default=None)
     metrics: list = field(default_factory=lambda: ["mAP"])
     show: bool = field(default=True)
     show_score_thr: float = field(default=0.3)
 
     def run_step(self):
+        config = Configuration(self.model)
+        cfg = config.load_config_for_test()
 
-        for model_config in self.models:
-            config = Configuration(model_config)
-            cfg = config.load_config_for_test()
+        show_dir = f"{cfg.work_dir}/results"
+        out = f"{cfg.work_dir}/results/results.pkl"
 
-            show_dir = f"{cfg.work_dir}/results"
-            out = f"{cfg.work_dir}/results/results.pkl"
+        dataset, data_loader = DatasetLoader(cfg)
 
-            dataset, data_loader = DatasetLoader(cfg)
+        rank, _ = get_dist_info()
 
-            rank, _ = get_dist_info()
+        if cfg.work_dir is not None and rank == 0:
+            mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
+            timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
+            json_file = osp.join(f"{cfg.work_dir}/results", f'eval_{timestamp}.json')
 
-            if cfg.work_dir is not None and rank == 0:
-                mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
-                timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-                json_file = osp.join(f"{cfg.work_dir}/results", f'eval_{timestamp}.json')
+        # build the model and load checkpoint
+        cfg.model.train_cfg = None
+        model = build_detector(cfg.model, test_cfg=cfg.get('test_cfg'))
 
-            # build the model and load checkpoint
-            cfg.model.train_cfg = None
-            model = build_detector(cfg.model, test_cfg=cfg.get('test_cfg'))
+        checkpoint = load_checkpoint(model, f"{cfg.work_dir}/latest.pth", map_location='cpu')
 
-            checkpoint = load_checkpoint(model, f"{cfg.work_dir}/latest.pth", map_location='cpu')
+        if 'CLASSES' in checkpoint.get('meta', {}):
+            model.CLASSES = checkpoint['meta']['CLASSES']
+        else:
+            model.CLASSES = dataset.CLASSES
 
-            if 'CLASSES' in checkpoint.get('meta', {}):
-                model.CLASSES = checkpoint['meta']['CLASSES']
-            else:
-                model.CLASSES = dataset.CLASSES
+        model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
+        outputs = single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
 
-            model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
-            outputs = single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
+        print(f'\nwriting results to {out}')
+        mmcv.dump(outputs, out)
 
-            print(f'\nwriting results to {out}')
-            mmcv.dump(outputs, out)
+        for metric_name in self.metrics:
+            eval_kwargs = cfg.get('evaluation', {}).copy()
 
-            for metric_name in self.metrics:
-                eval_kwargs = cfg.get('evaluation', {}).copy()
+            for key in [
+                'interval', 'tmpdir', 'start', 'gpu_collect', 'save_best',
+                'rule', 'dynamic_intervals'
+            ]:
+                eval_kwargs.pop(key, None)
+            eval_kwargs.update(dict(metric=metric_name))
 
-                for key in [
-                    'interval', 'tmpdir', 'start', 'gpu_collect', 'save_best',
-                    'rule', 'dynamic_intervals'
-                ]:
-                    eval_kwargs.pop(key, None)
-                eval_kwargs.update(dict(metric=metric_name))
-
-                metric = dataset.evaluate(outputs, **eval_kwargs)
-                metric_dict = dict(config=config.config_file, metric=metric)
-                mmcv.dump(metric_dict, json_file)
+            metric = dataset.evaluate(outputs, **eval_kwargs)
+            metric_dict = dict(config=config.config_file, metric=metric)
+            mmcv.dump(metric_dict, json_file)

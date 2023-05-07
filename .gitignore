@@ -132,6 +132,3 @@ src/infra/checkpoints/
 datasets/
 .idea/
 results/
-resource/client_secret.json
-resource/credentials.json
-resource/*.yaml
