@@ -7,13 +7,14 @@ import json
 
 @dataclass
 class PipelineBuilder:
+    base_path: str = field(default="../../resource")
     pipeline_file: str = field(default="pipeline")
     steps: List[Step] = field(default=None)
 
     def prepare_steps(self):
         self.steps = list()
 
-        with open(f"../resource/{self.pipeline_file}.json") as f:
+        with open(f"{self.base_path}/{self.pipeline_file}.json") as f:
             pipeline_json = json.load(f)
 
         self._add_model_config(pipeline_json)
@@ -27,7 +28,7 @@ class PipelineBuilder:
                     self.steps.append(Train(model=model, **step))
 
     def _add_model_config(self, pipeline: dict):
-        with open(f"../resource/models.json") as f:
+        with open(f"{self.base_path}/models.json") as f:
             models_json = json.load(f)
 
         for idx, model_name in enumerate(pipeline["models"]):
@@ -52,12 +53,14 @@ class PipelineBuilder:
 
     def run_all(self):
         for step in self.steps:
-            step.run_step()
+          print(step.name)
+          step.run_step()
 
     def run_by_step_name(self, step_name: str):
         for step in self.steps:
-            if step.name == step_name:
-                step.run_step()
+          print(step.name)
+          if step_name in step.name:
+              step.run_step()
 
     def reset(self):
         self.steps = []

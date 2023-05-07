@@ -6,9 +6,7 @@ from dataclasses import dataclass, field
 from mmcv import Config
 import os.path as osp
 import time
-import json
 import mmcv
-import os
 
 
 @dataclass
@@ -18,7 +16,7 @@ class Configuration:
     cfg: Config = field(default=None)
 
     def __post_init__(self):
-        self.config_file = f"""../src/infra/configs/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
+        self.config_file = f"""../../src/infra/configs/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
         self.cfg = Config.fromfile(self.config_file)
 
         self.cfg.load_from = self.base_file["fine_tune"]["load_from"]
@@ -154,4 +152,3 @@ class Configuration:
                     ds_cfg.pipeline = replace_ImageToTensor(ds_cfg.pipeline)
 
         return self.cfg
-
