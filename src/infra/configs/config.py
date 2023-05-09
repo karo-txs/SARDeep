@@ -49,7 +49,7 @@ class Configuration:
         self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(self.config_file)))
 
     def config_dataset(self):
-        data_root = 'mmdetection/data'
+        data_root = '../mmdetection/data'
 
         if self.cfg.dataset_type == "VOCDataset":
             type = "VOC2012"

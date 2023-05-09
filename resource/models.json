@@ -13,7 +13,7 @@
       },
       "fine_tune": {
         "name": "faster_rcnn_r50_fpn_1x_coco",
-        "load_from": "infra/checkpoints/faster_rcnn_r50_fpn_1x_coco.pth"
+        "load_from": "../infra/checkpoints/faster_rcnn_r50_fpn_1x_coco.pth"
       }
     },
     {
@@ -29,7 +29,7 @@
       },
       "fine_tune": {
         "name": "yolov3_d53_fp16_mstrain-608_273e_coco",
-        "load_from": "infra/checkpoints/yolov3_d53_fp16_mstrain-608_273e_coco.pth"
+        "load_from": "../infra/checkpoints/yolov3_d53_fp16_mstrain-608_273e_coco.pth"
       }
     },
     {
@@ -45,7 +45,7 @@
       },
       "fine_tune": {
         "name": "yolox_x_8x8_300e_coco",
-        "load_from": "infra/checkpoints/yolox_x_8x8_300e_coco.pth"
+        "load_from": "../infra/checkpoints/yolox_x_8x8_300e_coco.pth"
       }
     },
     {
@@ -61,7 +61,7 @@
       },
       "fine_tune": {
         "name": "fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco",
-        "load_from": "infra/checkpoints/fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco.pth"
+        "load_from": "../infra/checkpoints/fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco.pth"
       }
     },
     {
@@ -77,7 +77,7 @@
       },
       "fine_tune": {
         "name": "ssd512_coco",
-        "load_from": "infra/checkpoints/ssd512_coco.pth"
+        "load_from": "../infra/checkpoints/ssd512_coco.pth"
       }
     }
   ]
