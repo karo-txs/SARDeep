@@ -1,9 +1,8 @@
 {
   "project_name": "SARDeep",
   "pipeline_id": "0.0.1",
-  "work_dir": "results",
   "models": [
-        "yolox"
+        "yolov3"
       ],
   "datasets": [
         {

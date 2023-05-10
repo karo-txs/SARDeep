@@ -3,10 +3,14 @@ from mmdet.utils import (collect_env, get_root_logger, get_device, compat_cfg)
 from mmdet.apis import init_random_seed, set_random_seed
 from mmdet.datasets import replace_ImageToTensor
 from dataclasses import dataclass, field
+from dotenv import load_dotenv
 from mmcv import Config
 import os.path as osp
 import time
 import mmcv
+import os
+
+load_dotenv()
 
 
 @dataclass
@@ -16,11 +20,11 @@ class Configuration:
     cfg: Config = field(default=None)
 
     def __post_init__(self):
-        self.config_file = f"""../../src/infra/configs/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
+        self.config_file = f"""{os.getenv("CONFIG_PATH")}/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
         self.cfg = Config.fromfile(self.config_file)
 
         self.cfg.load_from = self.base_file["fine_tune"]["load_from"]
-        self.cfg.work_dir = f"""../../{self.base_file["work_dir"]}/{self.base_file["name"]}/{self.base_file["version"]}/{self.base_file["datasets"]["train"]}/{self.base_file["datasets"]["test"]}"""
+        self.cfg.work_dir = f"""{os.getenv("WORK_DIR")}/{self.base_file["name"]}/{self.base_file["version"]}/{self.base_file["datasets"]["train"]}/{self.base_file["datasets"]["test"]}"""
 
         self.config_dataset()
 
@@ -49,7 +53,7 @@ class Configuration:
         self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(self.config_file)))
 
     def config_dataset(self):
-        data_root = '../mmdetection/data'
+        data_root = os.getenv("DATA_ROOT")
 
         if self.cfg.dataset_type == "VOCDataset":
             type = "VOC2012"

@@ -1,5 +1,6 @@
 import argparse
-import os, sys
+import os
+import sys
 
 absolute_path = os.path.abspath(__file__)
 sys.path.append("/".join(os.path.dirname(absolute_path).split("/")[:-1]))

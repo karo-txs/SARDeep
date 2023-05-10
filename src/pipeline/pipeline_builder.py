@@ -1,13 +1,17 @@
 from dataclasses import dataclass, field
 from src.interfaces.step import Step
 from src.pipeline.steps import *
+from dotenv import load_dotenv
 from typing import List
 import json
+import os
+
+load_dotenv()
 
 
 @dataclass
 class PipelineBuilder:
-    base_path: str = field(default="../../resource")
+    base_path: str = field(default=os.getenv("RESOURCE_PATH"))
     pipeline_file: str = field(default="pipeline")
     steps: List[Step] = field(default=None)
 
@@ -35,7 +39,9 @@ class PipelineBuilder:
             for model_dict in models_json["models"]:
                 if f"""{model_dict["name"]}{model_dict["version"]}""" == model_name:
                     self._add_dataset_config(model_dict, pipeline)
-                    model_dict["work_dir"] = pipeline["work_dir"]
+                    model_dict["work_dir"] = os.getenv("WORK_DIR")
+                    model_dict["fine_tune"]["load_from"] = model_dict["fine_tune"]["load_from"].replace(
+                        "CHECKPOINTS_PATH", os.getenv('CHECKPOINTS_PATH'))
                     pipeline["models"][idx] = model_dict
 
     def _add_dataset_config(self, model_dict: dict, pipeline: dict):
@@ -53,14 +59,14 @@ class PipelineBuilder:
 
     def run_all(self):
         for step in self.steps:
-          print(step.name)
-          step.run_step()
+            print(step.name)
+            step.run_step()
 
     def run_by_step_name(self, step_name: str):
         for step in self.steps:
-          print(step.name)
-          if step_name in step.name:
-              step.run_step()
+            print(step.name)
+            if step_name in step.name:
+                step.run_step()
 
     def reset(self):
         self.steps = []
