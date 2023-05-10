@@ -7,11 +7,9 @@ log_config = dict(
     interval=5,
     hooks=[
         dict(type='TextLoggerHook'),
-        dict(type='TensorboardLoggerHook')
     ])
 custom_hooks = [
     dict(type='NumClassCheckHook'),
-    dict(type='CheckInvalidLossHook', interval=20, priority='VERY_LOW')
 ]
 
 dist_params = dict(backend='nccl')
