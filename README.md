@@ -3,6 +3,7 @@ Detecting Humans in Aerial Images for Search and Rescue Operations with Deep Lea
 
 ### 1. Setup Environment
 #### Run notebook with pipeline
+https://github.com/AFKaro/SARDeep/blob/main/pipeline.ipynb
 
 #### Run Locally
 1. Environment Activation
