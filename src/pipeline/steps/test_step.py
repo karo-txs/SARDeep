@@ -23,8 +23,10 @@ class Test(Step):
         config = Configuration(self.model)
         cfg = config.load_config_for_test()
 
-        show_dir = f"{cfg.work_dir}/results"
-        out = f"{cfg.work_dir}/results/results.pkl"
+        test_dir = "/".join(cfg.work_dir.split("/")[:-1])
+        data_test = config.base_file["datasets"]["paths"]["test"]["name"]
+        show_dir = f"""{test_dir}/test/{data_test}"""
+        out = f"""{test_dir}/test/{data_test}/results.pkl"""
 
         dataset, data_loader = DatasetLoader(cfg)
 

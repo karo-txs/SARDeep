@@ -24,7 +24,8 @@ class Configuration:
         self.cfg = Config.fromfile(self.config_file)
 
         self.cfg.load_from = self.base_file["fine_tune"]["load_from"]
-        self.cfg.work_dir = f"""{os.getenv("WORK_DIR")}/{self.base_file["name"]}/{self.base_file["version"]}/{self.base_file["datasets"]["train"]}/{self.base_file["datasets"]["test"]}"""
+        self.cfg.work_dir = f"""{os.getenv("WORK_DIR")}/{self.base_file["name"]}/{self.base_file["version"
+        ]}/{self.base_file["datasets"]["name"]}/{self.base_file["datasets"]["fold"]}"""
 
         self.config_dataset()
 
@@ -53,35 +54,15 @@ class Configuration:
         self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(self.config_file)))
 
     def config_dataset(self):
-        data_root = os.getenv("DATA_ROOT")
+        data_path = self.base_file["datasets"]["paths"]
+        self.cfg.data.train.ann_file = data_path["train"]["ann_file"]
+        self.cfg.data.train.img_prefix = data_path["train"]["img_prefix"]
 
-        if self.cfg.dataset_type == "VOCDataset":
-            type = "VOC2012"
-            ann_file = "DATA_PATH/ImageSets/Main/SPLIT.txt"
-            img_prefix = "DATA_PATH"
+        self.cfg.data.val.ann_file = data_path["val"]["ann_file"]
+        self.cfg.data.val.img_prefix = data_path["val"]["img_prefix"]
 
-        elif self.cfg.dataset_type == "CocoDataset":
-            type = "coco"
-            ann_file = "DATA_PATH/annotations/instances_SPLIT2017.json"
-            img_prefix = "DATA_PATH/images/SPLIT2017"
-
-        train_data_path = f"""{data_root}/{self.base_file["datasets"]["train"]}/{type}"""
-        train_ann = ann_file.replace("DATA_PATH", train_data_path)
-        train_img_prefix = img_prefix.replace("DATA_PATH", train_data_path)
-        self.cfg.data.train.ann_file = train_ann.replace("SPLIT", "train")
-        self.cfg.data.train.img_prefix = train_img_prefix.replace("SPLIT", "train")
-
-        test_data_path = f"""{data_root}/{self.base_file["datasets"]["test"]}/{type}"""
-        test_ann = ann_file.replace("DATA_PATH", test_data_path)
-        test_img_prefix = img_prefix.replace("DATA_PATH", train_data_path)
-        self.cfg.data.test.ann_file = test_ann.replace("SPLIT", "test")
-        self.cfg.data.test.img_prefix = test_img_prefix.replace("SPLIT", "test")
-
-        val_data_path = f"""{data_root}/{self.base_file["datasets"]["val"]}/{type}"""
-        val_ann = ann_file.replace("DATA_PATH", val_data_path)
-        val_img_prefix = img_prefix.replace("DATA_PATH", train_data_path)
-        self.cfg.data.val.ann_file = val_ann.replace("SPLIT", "val")
-        self.cfg.data.val.img_prefix = val_img_prefix.replace("SPLIT", "val")
+        self.cfg.data.test.ann_file = data_path["test"]["ann_file"]
+        self.cfg.data.test.img_prefix = data_path["test"]["img_prefix"]
 
         if self.cfg.data.train.type == "MultiImageMixDataset":
             self.cfg.data.train.pop("classes")

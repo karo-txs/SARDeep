@@ -2,6 +2,8 @@ optimum[neural-compressor]
 torch
 python-dotenv
 httplib2==0.15.0
+pascal-voc-writer==0.1.4
+sklearn
 torchvision
 tqdm
 requests
