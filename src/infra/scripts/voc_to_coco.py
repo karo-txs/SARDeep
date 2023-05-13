@@ -8,10 +8,8 @@ from tqdm import tqdm
 import re
 
 
-def get_label2id(labels_path: str) -> Dict[str, int]:
+def get_label2id(labels_str: list) -> Dict[str, int]:
     """id is 1 start"""
-    with open(labels_path, 'r') as f:
-        labels_str = f.read().split()
     labels_ids = list(range(1, len(labels_str) + 1))
     return dict(zip(labels_str, labels_ids))
 
@@ -121,6 +119,23 @@ def convert_xmls_to_cocojson(annotation_paths: List[str],
         f.write(output_json)
 
 
+def voc_to_coco(labels=None, ann_dir=None, ann_ids=None, ext="", ann_paths_list=None, output="output.json",
+                extract_num_from_imgid=True):
+    label2id = get_label2id(labels_str=labels)
+    ann_paths = get_annpaths(
+        ann_dir_path=ann_dir,
+        ann_ids_path=ann_ids,
+        ext=ext,
+        annpaths_list_path=ann_paths_list
+    )
+    convert_xmls_to_cocojson(
+        annotation_paths=ann_paths,
+        label2id=label2id,
+        output_jsonpath=output,
+        extract_num_from_imgid=extract_num_from_imgid
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='This script support converting voc format xmls to coco format json')
@@ -130,14 +145,14 @@ def main():
                         help='path to annotation files ids list. It is not need when use --ann_paths_list')
     parser.add_argument('--ann_paths_list', type=str, default=None,
                         help='path of annotation paths list. It is not need when use --ann_dir and --ann_ids')
-    parser.add_argument('--labels', type=str, default=None,
-                        help='path to label list.')
+    parser.add_argument('--labels', type=list, default=None,
+                        help='label list.')
     parser.add_argument('--output', type=str, default='output.json', help='path to output json file')
     parser.add_argument('--ext', type=str, default='', help='additional extension of annotation file')
     parser.add_argument('--extract_num_from_imgid', action="store_true",
                         help='Extract image number from the image filename')
     args = parser.parse_args()
-    label2id = get_label2id(labels_path=args.labels)
+    label2id = get_label2id(labels_str=args.labels)
     ann_paths = get_annpaths(
         ann_dir_path=args.ann_dir,
         ann_ids_path=args.ann_ids,

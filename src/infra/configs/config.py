@@ -55,13 +55,21 @@ class Configuration:
         self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(self.config_file)))
 
     def config_dataset(self):
-        data_path = self.base_file["datasets"]["paths"]
+        if self.base_file["datasets"]["dataset_type"] == "voc":
+            self.cfg.dataset_type = "VOCDataset"
+        elif self.base_file["datasets"]["dataset_type"] == "coco":
+            self.cfg.dataset_type = "CocoDataset"
+
+        data_path = self.base_file["datasets"]["paths"][self.base_file["datasets"]["dataset_type"]]
+        self.cfg.data.train.type = self.cfg.dataset_type
         self.cfg.data.train.ann_file = data_path["train"]["ann_file"]
         self.cfg.data.train.img_prefix = data_path["train"]["img_prefix"]
 
+        self.cfg.data.val.type = self.cfg.dataset_type
         self.cfg.data.val.ann_file = data_path["val"]["ann_file"]
         self.cfg.data.val.img_prefix = data_path["val"]["img_prefix"]
 
+        self.cfg.data.test.type = self.cfg.dataset_type
         self.cfg.data.test.ann_file = data_path["test"]["ann_file"]
         self.cfg.data.test.img_prefix = data_path["test"]["img_prefix"]
 

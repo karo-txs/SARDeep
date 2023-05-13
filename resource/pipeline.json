@@ -14,6 +14,7 @@
       "name": "DatasetPreparationStep",
       "dataset_train": "sard",
       "dataset_test": "sard",
+      "dataset_type": "voc",
       "n_splits": 5
     }
   ],
@@ -24,16 +25,16 @@
     {
       "name": "TestDetectorStep",
       "metrics": [
-        "mAP",
-        "AP25",
-        "AP50",
-        "AP75"
+        "mAP"
       ],
       "show": true,
       "show_score_thr": 0.3
     },
     {
-      "name": "QuantizationStep"
+      "name": "QuantizationStep",
+      "approachs": [
+
+      ]
     }
   ]
 }

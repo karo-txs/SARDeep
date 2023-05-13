@@ -21,7 +21,7 @@ class Test(Step):
         config = Configuration(self.model)
         cfg = config.load_config_for_test()
 
-        data_test = config.base_file["datasets"]["paths"]["test"]["name"]
+        data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"]["name"]
         show_dir = f"""{cfg.work_dir}/test/{data_test}"""
         out = f"""{cfg.work_dir}/test/{data_test}/results.pkl"""
 
@@ -52,6 +52,13 @@ class Test(Step):
                 eval_kwargs.pop(key, None)
             eval_kwargs.update(dict(metric=metric_name))
 
-            metric = dataset.evaluate(outputs, **eval_kwargs)
+            if config.base_file["datasets"]["dataset_type"] == "coco":
+                metric = dataset.evaluate(outputs,
+                                          iou_thrs=[0.50, 0.55,
+                                                    0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95],
+                                          metric_items=['mAP', 'mAP_50', 'mAP_75',
+                                                        'mAP_s', 'mAP_m', 'mAP_l'], **eval_kwargs)
+            else:
+                metric = dataset.evaluate(outputs, **eval_kwargs)
             metric_dict = dict(config=config.config_file, metric=metric)
             mmcv.dump(metric_dict, json_file)

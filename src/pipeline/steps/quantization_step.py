@@ -6,8 +6,7 @@ import torch.nn as nn
 
 @dataclass
 class Quantization(Step):
-    model: nn.Module = field(default=None)
-    dataloader: DataLoader = field(default=None)
+    model: dict = field(default=None)
 
     def run_step(self):
        pass
