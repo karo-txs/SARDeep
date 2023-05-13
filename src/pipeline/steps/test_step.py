@@ -9,7 +9,6 @@ import os.path as osp
 import shutil
 import torch
 import mmcv
-import sys
 import os
 
 
@@ -30,9 +29,6 @@ class Test(Step):
                 "name"]
             show_dir = f"""{cfg.work_dir}/test/{data_test}"""
             out = f"""{cfg.work_dir}/test/{data_test}/results_{eval_type}.pkl"""
-
-            stdout_origin = sys.stdout
-            sys.stdout = open(f"{show_dir}/log.txt", "w")
 
             loader = Loader(cfg)
             dataset, data_loader = loader.load_dataset()
@@ -69,9 +65,6 @@ class Test(Step):
             metric = dataset.evaluate(outputs, **eval_kwargs)
             metric_dict = dict(config=config.config_file, metric=metric)
             mmcv.dump(metric_dict, json_file)
-
-            sys.stdout.close()
-            sys.stdout = stdout_origin
 
     def move_images(self, show_dir: str):
         if not os.path.exists(f"{show_dir}/JPEGImagesCOCO"):
