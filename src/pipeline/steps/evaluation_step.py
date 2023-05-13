@@ -35,12 +35,12 @@ class Evaluation(Step):
         eval_dict["dataset_test"] = self.model["datasets"]["paths"]["voc"]["test"]["name"]
         eval_dct = {k: [v] for k, v in eval_dict.items()}
 
-        df = pd.DataFrame.from_dict(eval_dct, orient="columns")
+        df = pd.DataFrame.from_dict(eval_dct)
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        df.to_csv(f"{output_dir}/metric_results.csv", mode='a', index=False)
+        df.to_csv(f"{output_dir}/metric_results.csv", mode='a', index=False, header=not os.path.exists(f"{output_dir}/metric_results.csv"))
 
         train_epochs = ""
         for root, dirs, files in os.walk(f"{config.cfg.work_dir}"):
@@ -81,8 +81,8 @@ class Evaluation(Step):
                 final_dict = self.merge_dicts(train_dict, results)
                 final_dict = {k: [v] for k, v in final_dict.items()}
 
-                df = pd.DataFrame.from_dict(final_dict, orient="columns")
-                df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False)
+                df = pd.DataFrame.from_dict(final_dict)
+                df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=not os.path.exists(f"{output_dir}/epoch_results.csv"))
 
     def merge_dicts(self, *dict_args):
         result = {}
