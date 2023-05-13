@@ -35,6 +35,8 @@ class PipelineBuilder:
                     self.steps.append(Train(model=model, **step))
                 elif step["name"] == "TestDetectorStep":
                     self.steps.append(Test(model=model, **step))
+                elif step["name"] == "EvaluationStep":
+                    self.steps.append(Evaluation(model=model, **step))
 
     def _add_model_config(self, pipeline: dict):
         with open(f"{self.base_path}/models.json") as f:
