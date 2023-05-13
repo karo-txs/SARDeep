@@ -66,8 +66,8 @@ class PipelineBuilder:
 
     def run_by_step_name(self, step_name: str):
         for step in self.steps:
-            print(step.name)
             if step_name in step.name:
+                print(step.name)
                 step.run_step()
 
     def reset(self):

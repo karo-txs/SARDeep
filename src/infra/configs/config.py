@@ -54,13 +54,13 @@ class Configuration:
         # dump config
         self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(self.config_file)))
 
-    def config_dataset(self):
-        if self.base_file["datasets"]["dataset_type"] == "voc":
+    def config_dataset(self, dataset_type: str = "voc"):
+        if dataset_type == "voc":
             self.cfg.dataset_type = "VOCDataset"
-        elif self.base_file["datasets"]["dataset_type"] == "coco":
+        elif dataset_type == "coco":
             self.cfg.dataset_type = "CocoDataset"
 
-        data_path = self.base_file["datasets"]["paths"][self.base_file["datasets"]["dataset_type"]]
+        data_path = self.base_file["datasets"]["paths"][dataset_type]
         self.cfg.data.train.type = self.cfg.dataset_type
         self.cfg.data.train.ann_file = data_path["train"]["ann_file"]
         self.cfg.data.train.img_prefix = data_path["train"]["img_prefix"]
@@ -109,8 +109,9 @@ class Configuration:
             "meta": meta
         }
 
-    def load_config_for_test(self) -> Config:
+    def load_config_for_test(self, dataset_type: str = "voc") -> Config:
         self.cfg = replace_cfg_vals(self.cfg)
+        self.config_dataset(dataset_type)
 
         # update data root according to MMDET_DATASETS
         update_data_root(self.cfg)

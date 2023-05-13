@@ -24,8 +24,9 @@
     },
     {
       "name": "TestDetectorStep",
-      "metrics": [
-        "mAP"
+      "eval_metrics": [
+        "coco",
+        "voc"
       ],
       "show": true,
       "show_score_thr": 0.3
@@ -33,8 +34,10 @@
     {
       "name": "QuantizationStep",
       "approachs": [
-
       ]
+    },
+    {
+      "name": "EvaluationStep"
     }
   ]
 }
