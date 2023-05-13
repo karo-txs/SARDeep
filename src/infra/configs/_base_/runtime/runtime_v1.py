@@ -25,7 +25,7 @@ resume_from = None
 workflow = [('train', 1)]
 
 gpu_ids = range(1)
-device = 'cuda'
+device = 'cpu'
 
 # disable opencv multithreading to avoid system being overloaded
 opencv_num_threads = 0

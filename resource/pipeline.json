@@ -2,7 +2,7 @@
   "project_name": "SARDeep",
   "pipeline_id": "0.0.1",
   "models": [
-    "yolov3"
+    "faster_rcnn"
   ],
   "datasets": {
     "dataset_train": "sard",
@@ -24,7 +24,10 @@
     {
       "name": "TestDetectorStep",
       "metrics": [
-        "mAP"
+        "mAP",
+        "AP25",
+        "AP50",
+        "AP75"
       ],
       "show": true,
       "show_score_thr": 0.3

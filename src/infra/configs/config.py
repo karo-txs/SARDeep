@@ -30,6 +30,7 @@ class Configuration:
         self.config_dataset()
 
         self.cfg = replace_cfg_vals(self.cfg)
+        self.cfg.device = os.getenv("DEVICE")
 
         # update data root according to MMDET_DATASETS
         update_data_root(self.cfg)

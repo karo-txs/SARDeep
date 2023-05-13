@@ -1,12 +1,10 @@
-from src.pipeline.functions.dataset.dataset_loader import DatasetLoader
-from mmcv.runner import (get_dist_info, load_checkpoint)
 from src.infra.configs.config import Configuration
 from dataclasses import dataclass, field
-from mmdet.models import build_detector
+from mmcv.runner import get_dist_info
 from mmdet.apis import single_gpu_test
+from src.pipeline.functions import *
 from src.interfaces.step import Step
 from mmdet.utils import build_dp
-from typing import List
 import os.path as osp
 import mmcv
 import time
@@ -23,31 +21,21 @@ class Test(Step):
         config = Configuration(self.model)
         cfg = config.load_config_for_test()
 
-        test_dir = "/".join(cfg.work_dir.split("/")[:-1])
         data_test = config.base_file["datasets"]["paths"]["test"]["name"]
-        show_dir = f"""{test_dir}/test/{data_test}"""
-        out = f"""{test_dir}/test/{data_test}/results.pkl"""
+        show_dir = f"""{cfg.work_dir}/test/{data_test}"""
+        out = f"""{cfg.work_dir}/test/{data_test}/results.pkl"""
 
-        dataset, data_loader = DatasetLoader(cfg)
+        loader = Loader(cfg)
+        dataset, data_loader = loader.load_dataset()
 
         rank, _ = get_dist_info()
 
         if cfg.work_dir is not None and rank == 0:
             mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
             timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-            json_file = osp.join(f"{cfg.work_dir}/results", f'eval_{timestamp}.json')
+            json_file = osp.join(f"{cfg.work_dir}/test/{data_test}", f'eval_{timestamp}.json')
 
-        # build the model and load checkpoint
-        cfg.model.train_cfg = None
-        model = build_detector(cfg.model, test_cfg=cfg.get('test_cfg'))
-
-        checkpoint = load_checkpoint(model, f"{cfg.work_dir}/latest.pth", map_location='cpu')
-
-        if 'CLASSES' in checkpoint.get('meta', {}):
-            model.CLASSES = checkpoint['meta']['CLASSES']
-        else:
-            model.CLASSES = dataset.CLASSES
-
+        model = loader.load_model()
         model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
         outputs = single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
 

@@ -1,12 +1,15 @@
 from mmdet.datasets import build_dataset, build_dataloader
 from torch.utils.data import DataLoader, Dataset
 from dataclasses import dataclass, field
+from mmdet.models import build_detector
+from mmcv.runner import load_checkpoint
 from typing import Tuple
 from mmcv import Config
+import torch.nn as nn
 
 
 @dataclass
-class DatasetLoader:
+class Loader:
     cfg: Config = field(default=None)
 
     def load_dataset(self, split: str = "test_dataloader") -> Tuple[Dataset, DataLoader]:
@@ -20,3 +23,10 @@ class DatasetLoader:
         dataset = build_dataset(self.cfg.data.test)
         data_loader = build_dataloader(dataset, **loader_cfg)
         return dataset, data_loader
+
+    def load_model(self) -> nn.Module:
+        self.cfg.model.train_cfg = None
+        model = build_detector(self.cfg.model, test_cfg=self.cfg.get('test_cfg'))
+        checkpoint = load_checkpoint(model, f"{self.cfg.work_dir}/latest.pth", map_location='cpu')
+        model.CLASSES = checkpoint['meta']['CLASSES']
+        return model
