@@ -28,12 +28,12 @@ class Evaluation(Step):
         with open(f"{result_dir}/eval_coco.json", "r") as jsonFile:
             eval_coco = json.load(jsonFile)
 
-        eval = self.merge_dicts(eval_voc["metric"], eval_coco["metric"])
-        eval["model"] = self.model["name"]
-        eval["dataset_train"] = self.model["datasets"]["name"]
-        eval["dataset_train_fold"] = int(self.model["datasets"]["fold"].replace("fold", ""))
-        eval["dataset_test"] = self.model["datasets"]["paths"]["voc"]["test"]["name"]
-        eval_dct = {k: [v] for k, v in eval.items()}
+        eval_dict = self.merge_dicts(eval_voc["metric"], eval_coco["metric"])
+        eval_dict["model"] = self.model["name"]
+        eval_dict["dataset_train"] = self.model["datasets"]["name"]
+        eval_dict["dataset_train_fold"] = int(self.model["datasets"]["fold"].replace("fold", ""))
+        eval_dict["dataset_test"] = self.model["datasets"]["paths"]["voc"]["test"]["name"]
+        eval_dct = {k: [v] for k, v in eval_dict.items()}
 
         df = pd.DataFrame.from_dict(eval_dct, orient="columns")
 
@@ -58,8 +58,6 @@ class Evaluation(Step):
             dataset_train_fold=int(self.model["datasets"]["fold"].replace("fold", "")),
             dataset_test=self.model["datasets"]["paths"]["voc"]["test"]["name"]
         )
-
-        final_dict = dict()
 
         for line in lines:
             if "mmdet" in line and "Epoch" in line:
