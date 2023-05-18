@@ -60,7 +60,7 @@ class Evaluation(Step):
         )
 
         for line in lines:
-            if "mmdet" in line and "Epoch" in line:
+            if "mmdet" in line and "Epoch" in line and "val" not in line:
                 epoch_batch = line.split("\t")[0].split(" ")[-1]
 
                 result_line = line.split("\t")[1].split(", ")

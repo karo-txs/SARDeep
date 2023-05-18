@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from src.pipeline.functions import *
 from src.interfaces.step import Step
 from mmdet.utils import build_dp
-from mmcv import tensor2imgs
+from mmcv import tensor2imgs, Config
 import os.path as osp
 import shutil
 import torch
@@ -36,35 +36,45 @@ class Test(Step):
             mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
 
             model = loader.load_model()
-            model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
-            outputs = self.single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
+            self.test_model(model, cfg, config, data_loader, dataset, show_dir, out, data_test, eval_type)
 
-            print(f'\nwriting results to {out}')
-            mmcv.dump(outputs, out)
+    def test_model(self, model: torch.nn.Module,
+                   cfg: Config,
+                   config: Configuration,
+                   data_loader: any,
+                   dataset: any,
+                   show_dir: str, out: str,
+                   data_test: str,
+                   eval_type: str):
+        model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
+        outputs = self.single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
 
-            json_file = osp.join(f"{cfg.work_dir}/test/{data_test}", f'eval_{eval_type}.json')
+        print(f'\nwriting results to {out}')
+        mmcv.dump(outputs, out)
 
-            eval_kwargs = cfg.get('evaluation', {}).copy()
+        json_file = osp.join(f"{cfg.work_dir}/test/{data_test}", f'eval_{eval_type}.json')
 
-            for key in [
-                'interval', 'tmpdir', 'start', 'gpu_collect', 'save_best',
-                'rule', 'dynamic_intervals'
-            ]:
-                eval_kwargs.pop(key, None)
+        eval_kwargs = cfg.get('evaluation', {}).copy()
 
-            if eval_type == "coco":
-                self.move_images(show_dir)
+        for key in [
+            'interval', 'tmpdir', 'start', 'gpu_collect', 'save_best',
+            'rule', 'dynamic_intervals'
+        ]:
+            eval_kwargs.pop(key, None)
 
-                eval_kwargs.update(dict(metric="bbox",
-                                        iou_thrs=[0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95],
-                                        metric_items=['mAP', 'mAP_50', 'mAP_75',
-                                                      'mAP_s', 'mAP_m', 'mAP_l']))
-            else:
-                eval_kwargs.update(dict(metric="mAP"))
+        if eval_type == "coco":
+            self.move_images(show_dir)
 
-            metric = dataset.evaluate(outputs, **eval_kwargs)
-            metric_dict = dict(config=config.config_file, metric=metric)
-            mmcv.dump(metric_dict, json_file)
+            eval_kwargs.update(dict(metric="bbox",
+                                    iou_thrs=[0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95],
+                                    metric_items=['mAP', 'mAP_50', 'mAP_75',
+                                                  'mAP_s', 'mAP_m', 'mAP_l']))
+        else:
+            eval_kwargs.update(dict(metric="mAP"))
+
+        metric = dataset.evaluate(outputs, **eval_kwargs)
+        metric_dict = dict(config=config.config_file, metric=metric)
+        mmcv.dump(metric_dict, json_file)
 
     def move_images(self, show_dir: str):
         if not os.path.exists(f"{show_dir}/JPEGImagesCOCO"):

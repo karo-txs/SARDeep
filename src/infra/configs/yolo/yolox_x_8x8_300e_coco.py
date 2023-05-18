@@ -1,7 +1,6 @@
 _base_ = [
     '../_base_/runtime/runtime_v1.py',
     '../_base_/schedules/schedule_1x.py',
-    '../_base_/data/coco_dataset.py',
 ]
 num_classes = 1
 img_scale = (640, 640)  # height, width
@@ -26,8 +25,9 @@ model = dict(
     test_cfg=dict(score_thr=0.01, nms=dict(type='nms', iou_threshold=0.65)))
 
 # dataset settings
-data_root = 'mmdetection/data/sard/coco/'
-dataset_type = 'CocoDataset'
+data_root = '../../src/mmdetection/data/sard/VOC2012/'
+dataset_type = 'VOCDataset'
+CLASSES = ['person']
 
 train_pipeline = [
     dict(type='Mosaic', img_scale=img_scale, pad_val=114.0),
@@ -83,8 +83,9 @@ data = dict(
         type='MultiImageMixDataset',
         dataset=dict(
             type=dataset_type,
-            ann_file=data_root + 'annotations/instances_train2017.json',
-            img_prefix=data_root + 'images/train2017/',
+            classes=tuple(CLASSES),
+            ann_file=data_root + 'ImageSets/Main/train.txt',
+            img_prefix=data_root + "JPEGImages",
             pipeline=[
                 dict(type='LoadImageFromFile'),
                 dict(type='LoadAnnotations', with_bbox=True)
@@ -94,13 +95,15 @@ data = dict(
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'images/val2017/',
+        classes=tuple(CLASSES),
+        ann_file=data_root + 'ImageSets/Main/val.txt',
+        img_prefix=data_root + "JPEGImages",
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_test2017.json',
-        img_prefix=data_root + 'images/test2017/',
+        classes=tuple(CLASSES),
+        ann_file=data_root + 'ImageSets/Main/test.txt',
+        img_prefix=data_root + "JPEGImages",
         pipeline=test_pipeline))
 
 # optimizer

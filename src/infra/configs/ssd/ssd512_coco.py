@@ -1,7 +1,7 @@
 _base_ = [
     '../_base_/runtime/runtime_v1.py',
     '../_base_/schedules/schedule_1x.py',
-    '../_base_/data/coco_dataset.py',
+    '../_base_/data/voc_dataset.py',
 ]
 input_size = 512
 num_classes = 1

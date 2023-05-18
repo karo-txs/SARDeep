@@ -9,7 +9,7 @@
         "interval": 5
       },
       "runner": {
-        "max_epochs": 1
+        "max_epochs": 60
       },
       "fine_tune": {
         "name": "faster_rcnn_r50_fpn_1x_coco",
@@ -25,7 +25,7 @@
         "interval": 5
       },
       "runner": {
-        "max_epochs": 50
+        "max_epochs": 100
       },
       "fine_tune": {
         "name": "yolov3_d53_fp16_mstrain-608_273e_coco",
@@ -41,7 +41,7 @@
         "interval": 5
       },
       "runner": {
-        "max_epochs": 50
+        "max_epochs": 30
       },
       "fine_tune": {
         "name": "yolox_x_8x8_300e_coco",
@@ -57,7 +57,7 @@
         "interval": 5
       },
       "runner": {
-        "max_epochs": 50
+        "max_epochs": 30
       },
       "fine_tune": {
         "name": "fcos_x101_64x4d_fpn_gn-head_mstrain_640-800_2x_coco",
@@ -73,11 +73,43 @@
         "interval": 5
       },
       "runner": {
-        "max_epochs": 50
+        "max_epochs": 80
       },
       "fine_tune": {
         "name": "ssd512_coco",
         "load_from": "CHECKPOINTS_PATH/ssd512_coco.pth"
+      }
+    },
+    {
+      "name": "efficientnet",
+      "version": "",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 5
+      },
+      "runner": {
+        "max_epochs": 30
+      },
+      "fine_tune": {
+        "name": "retinanet_effb3_fpn_crop896_8x4_1x_coco",
+        "load_from": "CHECKPOINTS_PATH/retinanet_effb3_fpn_crop896_8x4_1x_coco.pth"
+      }
+    },
+    {
+      "name": "centernet",
+      "version": "",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 5
+      },
+      "runner": {
+        "max_epochs": 30
+      },
+      "fine_tune": {
+        "name": "centernet_resnet18_dcnv2_140e_coco",
+        "load_from": "CHECKPOINTS_PATH/centernet_resnet18_dcnv2_140e_coco.pth"
       }
     }
   ]

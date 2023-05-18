@@ -15,6 +15,7 @@ class DatasetPreparation(Step):
     dataset_train: str = field(default="sard")
     dataset_test: str = field(default="sard")
     dataset_type: str = field(default="voc")
+    converter_coco: bool = field(default=False)
     labels: list = field(default_factory=lambda: ["person"])
     n_splits: int = field(default=5)
 
@@ -30,7 +31,7 @@ class DatasetPreparation(Step):
         data_path = f"""{data_root}/{self.dataset_train}/VOC2012/ImageSets/Main"""
 
         # Copy to coco
-        if not os.path.isdir(f"""{data_root }/{self.dataset_train}/coco/images"""):
+        if not os.path.isdir(f"""{data_root }/{self.dataset_train}/coco/images""") and self.converter_coco:
             shutil.copytree(f"""{data_root}/{self.dataset_train}/VOC2012/JPEGImages/""", f"""{data_root
             }/{self.dataset_train}/coco/images""")
 
@@ -64,20 +65,22 @@ class DatasetPreparation(Step):
             data["datasets"].append(self.get_dataset_info(data_root, split["split"]))
 
             # VOC to COCO Format
-            voc_to_coco(ann_dir=f"{data_root}/{self.dataset_train}/VOC2012/Annotations",
-                        ann_ids=f"""{data_path}/train_fold{split["split"]}.txt""",
-                        labels=self.labels,
-                        output=f"""{data_root}/{self.dataset_train}/coco/annotations/instances_train_fold{split["split"]}.json""")
+            if self.converter_coco:
+                voc_to_coco(ann_dir=f"{data_root}/{self.dataset_train}/VOC2012/Annotations",
+                            ann_ids=f"""{data_path}/train_fold{split["split"]}.txt""",
+                            labels=self.labels,
+                            output=f"""{data_root}/{self.dataset_train}/coco/annotations/instances_train_fold{split["split"]}.json""")
 
-            voc_to_coco(ann_dir=f"{data_root}/{self.dataset_train}/VOC2012/Annotations",
-                        ann_ids=f"""{data_path}/val_fold{split["split"]}.txt""",
-                        labels=self.labels,
-                        output=f"""{data_root}/{self.dataset_train}/coco/annotations/instances_val_fold{split["split"]}.json""")
+                voc_to_coco(ann_dir=f"{data_root}/{self.dataset_train}/VOC2012/Annotations",
+                            ann_ids=f"""{data_path}/val_fold{split["split"]}.txt""",
+                            labels=self.labels,
+                            output=f"""{data_root}/{self.dataset_train}/coco/annotations/instances_val_fold{split["split"]}.json""")
 
-        voc_to_coco(ann_dir=f"{data_root}/{self.dataset_test}/VOC2012/Annotations",
-                    ann_ids=f"""{data_path}/test.txt""",
-                    labels=self.labels,
-                    output=f"""{data_root}/{self.dataset_test}/coco/annotations/instances_test.json""")
+        if self.converter_coco:
+            voc_to_coco(ann_dir=f"{data_root}/{self.dataset_test}/VOC2012/Annotations",
+                        ann_ids=f"""{data_path}/test.txt""",
+                        labels=self.labels,
+                        output=f"""{data_root}/{self.dataset_test}/coco/annotations/instances_test.json""")
 
         with open(f"{resource_path}/datasets.json", "w") as jsonFile:
             json.dump(data, jsonFile)

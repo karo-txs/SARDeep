@@ -27,7 +27,7 @@ class Configuration:
         self.cfg.work_dir = f"""{os.getenv("WORK_DIR")}/{self.base_file["name"]}/{self.base_file["version"
         ]}/{self.base_file["datasets"]["name"]}/{self.base_file["datasets"]["fold"]}"""
 
-        self.config_dataset()
+        self.config_dataset(self.cfg.dataset_type)
 
         self.cfg = replace_cfg_vals(self.cfg)
         self.cfg.device = os.getenv("DEVICE")
@@ -55,13 +55,14 @@ class Configuration:
         self.cfg.dump(osp.join(self.cfg.work_dir, osp.basename(self.config_file)))
 
     def config_dataset(self, dataset_type: str = "voc"):
-        if dataset_type == "voc":
+        if "voc" in dataset_type.lower():
             self.cfg.dataset_type = "VOCDataset"
-        elif dataset_type == "coco":
+            dataset_type = "voc"
+        elif "coco" in dataset_type.lower():
             self.cfg.dataset_type = "CocoDataset"
+            dataset_type = "coco"
 
         data_path = self.base_file["datasets"]["paths"][dataset_type]
-        self.cfg.data.train.type = self.cfg.dataset_type
         self.cfg.data.train.ann_file = data_path["train"]["ann_file"]
         self.cfg.data.train.img_prefix = data_path["train"]["img_prefix"]
 
@@ -74,9 +75,16 @@ class Configuration:
         self.cfg.data.test.img_prefix = data_path["test"]["img_prefix"]
 
         if self.cfg.data.train.type == "MultiImageMixDataset":
-            self.cfg.data.train.pop("classes")
+            if "classes" in self.cfg.data.train:
+                self.cfg.data.train.pop("classes")
             self.cfg.data.train.pop("ann_file")
             self.cfg.data.train.pop("img_prefix")
+
+            self.cfg.data.train.dataset.type = self.cfg.dataset_type
+            self.cfg.data.train.dataset.ann_file = data_path["train"]["ann_file"]
+            self.cfg.data.train.dataset.img_prefix = data_path["train"]["img_prefix"]
+        else:
+            self.cfg.data.train.type = self.cfg.dataset_type
 
     def load_config_for_train(self) -> dict:
         timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
