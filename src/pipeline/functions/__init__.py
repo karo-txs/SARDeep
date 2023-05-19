@@ -1,3 +1,2 @@
 from src.pipeline.functions.quantization.neural_compressor_dynamic_quantization import NeuralCompressorDynamicQuantization
-from src.pipeline.functions.quantization.neural_compressor_static_quantization import NeuralCompressorStaticQuantization
 from src.pipeline.functions.quantization.pytorch_dynamic_quantization import PytorchDynamicQuantization

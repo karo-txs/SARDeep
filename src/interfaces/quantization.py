@@ -27,15 +27,20 @@ class Quantization(ABC):
         pass
 
     def upload_config(self):
+        config = Configuration(self.model_dict)
+        data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"][
+            "name"]
+
         config = dict(is_quantized=True, approach=self.base_path)
-        with open(f"{self.model_path}/quantization/{self.base_path}/config.json", "w") as jsonFile:
+        mmcv.mkdir_or_exist(osp.abspath(f"{self.model_path}/test/quantization/{data_test}/{self.base_path}/"))
+        with open(f"{self.model_path}/test/quantization/{data_test}/{self.base_path}/config.json", "w") as jsonFile:
             json.dump(config, jsonFile)
 
     def test_quantized_model(self):
         test = Test(model=self.model_dict)
         config = Configuration(self.model_dict)
 
-        eval_types = ["voc"]
+        eval_types = ["voc", "coco"]
 
         for eval_type in eval_types:
             cfg = config.load_config_for_test(eval_type)

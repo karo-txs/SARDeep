@@ -36,12 +36,6 @@ class Quantization(Step):
                                                         dataloader=data_loader,
                                                         dataset=dataset,
                                                         model_dict=self.model))
-            elif approach == "NeuralCompressorStatic":
-                self.approachs.append(
-                    NeuralCompressorStaticQuantization(model=model, model_path=cfg.work_dir,
-                                                       dataloader=data_loader,
-                                                       dataset=dataset,
-                                                       model_dict=self.model))
 
     def run_step(self):
         for approach in self.approachs:

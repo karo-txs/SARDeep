@@ -132,3 +132,4 @@ src/infra/checkpoints/
 datasets/
 .idea/
 results/
+src/nc_workspace/
