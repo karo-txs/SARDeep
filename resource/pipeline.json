@@ -2,18 +2,18 @@
   "project_name": "SARDeep",
   "pipeline_id": "0.0.1",
   "models": [
-    "centernet"
+    "faster_rcnn"
   ],
   "datasets": {
-    "dataset_train": "heridal",
-    "dataset_test": "heridal",
+    "dataset_train": "sard",
+    "dataset_test": "sard",
     "fold": "fold1"
   },
   "priority_steps": [
     {
       "name": "DatasetPreparationStep",
-      "dataset_train": "heridal",
-      "dataset_test": "heridal",
+      "dataset_train": "sard",
+      "dataset_test": "sard",
       "dataset_type": "voc",
       "n_splits": 5
     }
@@ -29,10 +29,12 @@
         "voc"
       ],
       "show": true,
-      "show_score_thr": 0.3
+      "show_score_thr": 0.3,
+      "load_epoch": "1"
     },
     {
       "name": "QuantizationStep",
+      "load_epoch": "1",
       "approach_names": [
         "PytorchDynamic"
       ]

@@ -1,13 +1,14 @@
+from src.pipeline.utils.loader import Loader
 from src.infra.configs.config import Configuration
 from mmdet.core import encode_mask_results
 from dataclasses import dataclass, field
-from src.pipeline.functions import *
 from src.interfaces.step import Step
 from mmdet.utils import build_dp
 from mmcv import tensor2imgs, Config
 import os.path as osp
 import shutil
 import torch
+import json
 import mmcv
 import os
 
@@ -15,6 +16,7 @@ import os
 @dataclass
 class Test(Step):
     model: dict = field(default=None)
+    load_epoch: str = field(default="latest")
     eval_metrics: list = field(default_factory=lambda: ["voc"])
     show: bool = field(default=True)
     show_score_thr: float = field(default=0.3)
@@ -35,8 +37,12 @@ class Test(Step):
 
             mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
 
-            model = loader.load_model()
+            model = loader.load_model(self.load_epoch)
             self.test_model(model, cfg, config, data_loader, dataset, show_dir, out, data_test, eval_type)
+
+            config_info = dict(is_quantized=False, approach=None)
+            with open(f"{show_dir}/config.json", "w") as jsonFile:
+                json.dump(config_info, jsonFile)
 
     def test_model(self, model: torch.nn.Module,
                    cfg: Config,
@@ -49,10 +55,12 @@ class Test(Step):
         model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
         outputs = self.single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
 
+        mmcv.mkdir_or_exist(osp.abspath(show_dir))
+
         print(f'\nwriting results to {out}')
         mmcv.dump(outputs, out)
 
-        json_file = osp.join(f"{cfg.work_dir}/test/{data_test}", f'eval_{eval_type}.json')
+        json_file = osp.join(show_dir, f'eval_{eval_type}.json')
 
         eval_kwargs = cfg.get('evaluation', {}).copy()
 

@@ -37,6 +37,8 @@ class PipelineBuilder:
                     self.steps.append(Test(model=model, **step))
                 elif step["name"] == "EvaluationStep":
                     self.steps.append(Evaluation(model=model, **step))
+                elif step["name"] == "QuantizationStep":
+                    self.steps.append(Quantization(model=model, **step))
 
     def _add_model_config(self, pipeline: dict):
         with open(f"{self.base_path}/models.json") as f:
