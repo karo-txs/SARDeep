@@ -14,7 +14,7 @@ class Quantization(Step):
     approach_names: list = field(default_factory=lambda: [])
     approachs: List[Quantization] = field(default_factory=lambda: [])
 
-    def __post_init__(self):
+    def init_approachs(self):
         config = Configuration(self.model)
         cfg = config.load_config_for_test("voc")
 
@@ -38,6 +38,7 @@ class Quantization(Step):
                                                         model_dict=self.model))
 
     def run_step(self):
+        self.init_approachs()
         for approach in self.approachs:
             approach.quantize()
             approach.test_quantized_model()
