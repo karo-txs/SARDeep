@@ -14,3 +14,4 @@ pycocotools
 tensorboard
 opencv-python
 PyDrive
+torcheval
