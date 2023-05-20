@@ -31,10 +31,10 @@ class Quantization(ABC):
         data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"][
             "name"]
 
-        config = dict(is_quantized=True, approach=self.base_path)
-        mmcv.mkdir_or_exist(osp.abspath(f"{self.model_path}/test/quantization/{data_test}/{self.base_path}/"))
+        config_dict = dict(is_quantized=True, approach=self.base_path)
+        mmcv.mkdir_or_exist(osp.abspath(f"{self.model_path}/test_{config.device}/quantization/{data_test}/{self.base_path}/"))
         with open(f"{self.model_path}/test/quantization/{data_test}/{self.base_path}/config.json", "w") as jsonFile:
-            json.dump(config, jsonFile)
+            json.dump(config_dict, jsonFile)
 
     def test_quantized_model(self):
         test = Test(model=self.model_dict)
@@ -50,9 +50,9 @@ class Quantization(ABC):
 
             data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"][
                 "name"]
-            show_dir = f"""{cfg.work_dir}/test/{data_test}/quantization/{self.base_path}"""
+            show_dir = f"""{cfg.work_dir}/test_{config.device}/{data_test}/quantization/{self.base_path}"""
 
-            out = f"""{cfg.work_dir}/test/{data_test}/quantization/{self.base_path}/results_{eval_type}.pkl"""
+            out = f"""{cfg.work_dir}/test_{config.device}/{data_test}/quantization/{self.base_path}/results_{eval_type}.pkl"""
 
             test.test_model(model=self.quantized_model,
                             cfg=cfg,

@@ -32,8 +32,8 @@ class Test(Step):
 
             data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"][
                 "name"]
-            show_dir = f"""{cfg.work_dir}/test/{data_test}"""
-            out = f"""{cfg.work_dir}/test/{data_test}/results_{eval_type}.pkl"""
+            show_dir = f"""{cfg.work_dir}/test_{config.device}/{data_test}"""
+            out = f"""{cfg.work_dir}/test_{config.device}/{data_test}/results_{eval_type}.pkl"""
 
             loader = Loader(cfg)
             dataset, data_loader = loader.load_dataset()
