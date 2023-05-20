@@ -1,5 +1,6 @@
 from src.pipeline.utils.loader import Loader
 from src.infra.configs.config import Configuration
+from src.pipeline.utils.timer import Timer
 from mmdet.core import encode_mask_results
 from dataclasses import dataclass, field
 from src.interfaces.step import Step
@@ -9,6 +10,7 @@ import os.path as osp
 import shutil
 import torch
 import json
+import time
 import mmcv
 import os
 
@@ -20,6 +22,7 @@ class Test(Step):
     eval_metrics: list = field(default_factory=lambda: ["voc"])
     show: bool = field(default=True)
     show_score_thr: float = field(default=0.3)
+    timer: Timer = field(default=Timer())
 
     def run_step(self):
 
@@ -49,11 +52,15 @@ class Test(Step):
                    config: Configuration,
                    data_loader: any,
                    dataset: any,
-                   show_dir: str, out: str,
+                   show_dir: str,
+                   out: str,
                    data_test: str,
                    eval_type: str):
+        self.timer.device = config.device
+        self.timer.batch_size = config.batch_size
+
         model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
-        outputs = self.single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
+        outputs, timer_result = self.single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
 
         mmcv.mkdir_or_exist(osp.abspath(show_dir))
 
@@ -81,7 +88,7 @@ class Test(Step):
             eval_kwargs.update(dict(metric="mAP"))
 
         metric = dataset.evaluate(outputs, **eval_kwargs)
-        metric_dict = dict(config=config.config_file, metric=metric)
+        metric_dict = dict(config=config.config_file, metric=metric, timer=timer_result)
         mmcv.dump(metric_dict, json_file)
 
     def move_images(self, show_dir: str):
@@ -104,9 +111,13 @@ class Test(Step):
         results = []
         dataset = data_loader.dataset
         prog_bar = mmcv.ProgressBar(len(dataset))
+        inference_time = []
+
         for i, data in enumerate(data_loader):
             with torch.no_grad():
+                self.timer.start()
                 result = model(return_loss=False, rescale=True, **data)
+                self.timer.finalize()
 
             batch_size = len(result)
             if show or out_dir:
@@ -155,4 +166,7 @@ class Test(Step):
 
             for _ in range(batch_size):
                 prog_bar.update()
-        return results
+
+        self.timer.calculate()
+
+        return results, self.timer.result

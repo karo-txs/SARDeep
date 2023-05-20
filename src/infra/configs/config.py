@@ -18,6 +18,8 @@ class Configuration:
     base_file: dict
     config_file: str = field(default=None)
     cfg: Config = field(default=None)
+    device: str = field(default="cpu")
+    batch_size: str = field(default=64)
 
     def __post_init__(self):
         self.config_file = f"""{os.getenv("CONFIG_PATH")}/{self.base_file["name"]}/{self.base_file["fine_tune"]["name"]}.py"""
@@ -31,6 +33,7 @@ class Configuration:
 
         self.cfg = replace_cfg_vals(self.cfg)
         self.cfg.device = os.getenv("DEVICE")
+        self.device = os.getenv("DEVICE")
 
         # update data root according to MMDET_DATASETS
         update_data_root(self.cfg)

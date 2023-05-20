@@ -76,8 +76,8 @@ test_pipeline = [
 ]
 
 data = dict(
-    samples_per_gpu=8,
-    workers_per_gpu=4,
+    samples_per_gpu=4,
+    workers_per_gpu=1,
     persistent_workers=True,
     train=dict(
         type='MultiImageMixDataset',
@@ -138,18 +138,18 @@ custom_hooks = [
         type='YOLOXModeSwitchHook',
         num_last_epochs=num_last_epochs,
         priority=48),
-    dict(
-        type='SyncNormHook',
-        num_last_epochs=num_last_epochs,
-        interval=interval,
-        priority=48),
-    dict(
-        type='ExpMomentumEMAHook',
-        resume_from=resume_from,
-        momentum=0.0001,
-        priority=49)
+    # dict(
+    #     type='SyncNormHook',
+    #     num_last_epochs=num_last_epochs,
+    #     interval=interval,
+    #     priority=48),
+    # dict(
+    #     type='ExpMomentumEMAHook',
+    #     resume_from=resume_from,
+    #     momentum=0.0001,
+    #     priority=49)
 ]
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.
 # base_batch_size = (8 GPUs) x (8 samples per GPU)
-auto_scale_lr = dict(base_batch_size=64)
+auto_scale_lr = dict(base_batch_size=8)
