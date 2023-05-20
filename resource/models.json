@@ -111,6 +111,22 @@
         "name": "fovea_align_r101_fpn_gn-head_mstrain_640-800_4x4_2x_coco",
         "load_from": "CHECKPOINTS_PATH/fovea_align_r101_fpn_gn-head_mstrain_640-800_4x4_2x_coco.pth"
       }
+    },
+    {
+      "name": "yolo",
+      "version": "f",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 12
+      },
+      "runner": {
+        "max_epochs": 24
+      },
+      "fine_tune": {
+        "name": "yolof_r50_c5_8x8_1x_coco",
+        "load_from": "CHECKPOINTS_PATH/yolof_r50_c5_8x8_1x_coco.pth"
+      }
     }
   ]
 }
