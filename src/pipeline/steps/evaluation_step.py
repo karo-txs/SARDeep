@@ -51,7 +51,6 @@ class Evaluation(Step):
             eval_dict = self.merge_dicts(eval_dict, eval_voc["timer"])
             eval_dict = self.merge_dicts(eval_dict, config)
 
-            eval_dict["mean_inference"] = eval_voc["mean_inference"]
             eval_dict["model"] = self.model["name"]
             eval_dict["dataset_train"] = self.model["datasets"]["name"]
             eval_dict["dataset_train_fold"] = int(self.model["datasets"]["fold"].replace("fold", ""))
