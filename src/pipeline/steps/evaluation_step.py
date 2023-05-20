@@ -90,6 +90,10 @@ class Evaluation(Step):
                     dataset_test=self.model["datasets"]["paths"]["voc"]["test"]["name"]
                 )
 
+                epoch_df = None
+                if os.path.isfile(f"{output_dir}/epoch_results.csv"):
+                    epoch_df = pd.read_csv(f"{output_dir}/epoch_results.csv")
+
                 for line in lines:
                     if "mmdet" in line and "Epoch" in line and "val" not in line:
                         epoch_batch = line.split("\t")[0].split(" ")[-1]
@@ -112,14 +116,14 @@ class Evaluation(Step):
                         final_dict = self.merge_dicts(train_dict, results)
                         final_dict = {k: [v] for k, v in final_dict.items()}
 
-                        df = pd.DataFrame.from_dict(final_dict)
+                        if epoch_df:
+                            df = pd.DataFrame.from_dict(final_dict)
+                            epoch_df = pd.concat([epoch_df, df], axis=0)
+                        else:
+                            epoch_df = pd.DataFrame.from_dict(final_dict)
 
-                        if os.path.isfile(f"{output_dir}/epoch_results.csv"):
-                            df = pd.read_csv(f"{output_dir}/epoch_results.csv")
-                            df.append(final_dict, ignore_index=True)
-
-                        df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False,
-                                  header=not os.path.exists(f"{output_dir}/epoch_results.csv"))
+                epoch_df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False,
+                                header=not os.path.exists(f"{output_dir}/epoch_results.csv"))
 
     def merge_dicts(self, *dict_args):
         result = {}
