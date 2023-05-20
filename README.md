@@ -62,10 +62,17 @@ python setup.py install
  .
 ````
 
-5. Run setup.sh
+5. Update env variables
+````commandline
+SARDeep/src/.env
+````
+
+6. Run setup.sh
 ````commandline
 sh setup.sh
 ````
+
+7. Download checkpoints in mmdetection github and upload in SARDeep/src/infra/checkpoints
 
 ### 2. Train Models
 ### 3. Quantize models
