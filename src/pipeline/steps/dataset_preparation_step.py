@@ -15,7 +15,7 @@ class DatasetPreparation(Step):
     dataset_train: str = field(default="sard")
     dataset_test: str = field(default="sard")
     dataset_type: str = field(default="voc")
-    converter_coco: bool = field(default=False)
+    converter_coco: bool = field(default=True)
     labels: list = field(default_factory=lambda: ["person"])
     n_splits: int = field(default=5)
 
