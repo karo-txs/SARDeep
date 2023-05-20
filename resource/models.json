@@ -97,19 +97,19 @@
       }
     },
     {
-      "name": "centernet",
+      "name": "foveabox",
       "version": "",
       "optimizer": {
         "lr": 0.01,
         "momentum": 0.9,
-        "interval": 5
+        "interval": 12
       },
       "runner": {
-        "max_epochs": 30
+        "max_epochs": 24
       },
       "fine_tune": {
-        "name": "centernet_resnet18_dcnv2_140e_coco",
-        "load_from": "CHECKPOINTS_PATH/centernet_resnet18_dcnv2_140e_coco.pth"
+        "name": "fovea_align_r101_fpn_gn-head_mstrain_640-800_4x4_2x_coco",
+        "load_from": "CHECKPOINTS_PATH/fovea_align_r101_fpn_gn-head_mstrain_640-800_4x4_2x_coco.pth"
       }
     }
   ]
