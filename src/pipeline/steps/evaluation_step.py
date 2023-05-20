@@ -60,10 +60,14 @@ class Evaluation(Step):
             eval_dict["dataset_test"] = self.model["datasets"]["paths"]["voc"]["test"]["name"]
             eval_dct = {k: [v] for k, v in eval_dict.items()}
 
-            df = pd.DataFrame.from_dict(eval_dct)
-
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
+
+            df = pd.DataFrame.from_dict(eval_dct)
+
+            if os.path.isfile(f"{output_dir}/metric_results.csv"):
+                df = pd.read_csv(f"{output_dir}/metric_results.csv")
+                df.append(eval_dct, ignore_index=True)
 
             df.to_csv(f"{output_dir}/metric_results.csv", mode='a', index=False,
                       header=not os.path.exists(f"{output_dir}/metric_results.csv"))
@@ -109,6 +113,11 @@ class Evaluation(Step):
                         final_dict = {k: [v] for k, v in final_dict.items()}
 
                         df = pd.DataFrame.from_dict(final_dict)
+
+                        if os.path.isfile(f"{output_dir}/epoch_results.csv"):
+                            df = pd.read_csv(f"{output_dir}/epoch_results.csv")
+                            df.append(final_dict, ignore_index=True)
+
                         df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False,
                                   header=not os.path.exists(f"{output_dir}/epoch_results.csv"))
 
