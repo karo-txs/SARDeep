@@ -53,7 +53,7 @@ class Evaluation(Step):
             eval_dict = self.merge_dicts(eval_dict, eval_voc["timer"])
             eval_dict = self.merge_dicts(eval_dict, config)
 
-            eval_dict["model"] = self.model["name"]
+            eval_dict["model"] = f"""{self.model["name"]}{self.model["version"]}"""
             eval_dict["device"] = self.device
             eval_dict["dataset_train"] = self.model["datasets"]["name"]
             eval_dict["dataset_train_fold"] = int(self.model["datasets"]["fold"].replace("fold", ""))
@@ -64,13 +64,10 @@ class Evaluation(Step):
                 os.makedirs(output_dir)
 
             df = pd.DataFrame.from_dict(eval_dct)
-
             if os.path.isfile(f"{output_dir}/metric_results.csv"):
-                df = pd.read_csv(f"{output_dir}/metric_results.csv")
-                df.append(eval_dct, ignore_index=True)
-
-            df.to_csv(f"{output_dir}/metric_results.csv", mode='a', index=False,
-                      header=not os.path.exists(f"{output_dir}/metric_results.csv"))
+                df.to_csv(f"{output_dir}/metric_results.csv", mode='a', index=False, header=False)
+            else:
+                df.to_csv(f"{output_dir}/metric_results.csv", mode='a', index=False, header=True)
 
             if "quantization" not in result_dir:
                 train_epochs = ""
@@ -89,10 +86,6 @@ class Evaluation(Step):
                     dataset_train_fold=int(self.model["datasets"]["fold"].replace("fold", "")),
                     dataset_test=self.model["datasets"]["paths"]["voc"]["test"]["name"]
                 )
-
-                epoch_df = None
-                if os.path.isfile(f"{output_dir}/epoch_results.csv"):
-                    epoch_df = pd.read_csv(f"{output_dir}/epoch_results.csv")
 
                 for line in lines:
                     if "mmdet" in line and "Epoch" in line and "val" not in line:
@@ -113,17 +106,19 @@ class Evaluation(Step):
                         results = ast.literal_eval(result_str)
                         results["epoch_batch"] = epoch_batch
 
-                        final_dict = self.merge_dicts(train_dict, results)
+                        results_final = dict(epoch_batch=results["epoch_batch"],
+                                             lr=results["lr"],
+                                             memory=results["memory"],
+                                             loss=results["loss"])
+
+                        final_dict = self.merge_dicts(train_dict, results_final)
                         final_dict = {k: [v] for k, v in final_dict.items()}
+                        df = pd.DataFrame.from_dict(final_dict)
 
-                        if epoch_df:
-                            df = pd.DataFrame.from_dict(final_dict)
-                            epoch_df = pd.concat([epoch_df, df], axis=0)
+                        if os.path.isfile(f"{output_dir}/epoch_results.csv"):
+                            df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=False)
                         else:
-                            epoch_df = pd.DataFrame.from_dict(final_dict)
-
-                epoch_df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False,
-                                header=not os.path.exists(f"{output_dir}/epoch_results.csv"))
+                            df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=True)
 
     def merge_dicts(self, *dict_args):
         result = {}
