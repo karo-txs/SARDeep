@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from torcheval.metrics import Throughput
+#from torcheval.metrics import Throughput
 import statistics
 import torch
 import time
@@ -15,11 +15,11 @@ class Timer:
     total_time: float = field(default=0.0)
     starter: torch.cuda.Event = field(default=None)
     ender: torch.cuda.Event = field(default=None)
-    metric_throughput: Throughput = field(default=())
+    #metric_throughput: Throughput = field(default=())
     time_monotonic: float = field(default=0.0)
 
     def start(self):
-        self.metric_throughput = Throughput()
+        #self.metric_throughput = Throughput()
         self.time_monotonic = time.monotonic()
         if self.device == "cpu":
             self.start_time = time.time()
@@ -41,8 +41,9 @@ class Timer:
 
     def calculate(self):
         elapsed_time_sec = time.monotonic() - self.time_monotonic
-        self.metric_throughput.update(len(self.timings), elapsed_time_sec)
+        #self.metric_throughput.update(len(self.timings), elapsed_time_sec)
 
         self.result = {"mean_syn": sum(self.timings) / len(self.timings),
                        "std_syn": statistics.stdev(self.timings),
-                       "throughput": self.metric_throughput.compute().item()}
+                       "throughput": 0.0}
+                       #"throughput": self.metric_throughput.compute().item()}
