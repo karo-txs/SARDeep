@@ -6,14 +6,14 @@
   ],
   "datasets": {
     "dataset_train": "sard",
-    "dataset_test": "sard",
+    "dataset_test": "heridal",
     "fold": "fold1"
   },
   "priority_steps": [
     {
       "name": "DatasetPreparationStep",
       "dataset_train": "sard",
-      "dataset_test": "sard",
+      "dataset_test": "heridal",
       "dataset_type": "voc",
       "n_splits": 5
     }

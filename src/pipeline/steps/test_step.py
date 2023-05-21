@@ -111,7 +111,6 @@ class Test(Step):
         results = []
         dataset = data_loader.dataset
         prog_bar = mmcv.ProgressBar(len(dataset))
-        inference_time = []
 
         for i, data in enumerate(data_loader):
             with torch.no_grad():

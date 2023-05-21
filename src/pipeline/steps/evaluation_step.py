@@ -91,34 +91,36 @@ class Evaluation(Step):
                     if "mmdet" in line and "Epoch" in line and "val" not in line:
                         epoch_batch = line.split("\t")[0].split(" ")[-1]
 
-                        result_line = line.split("\t")[1].split(", ")
-                        del result_line[1]
+                        try:
+                            result_line = line.split("\t")[1].split(", ")
+                            del result_line[1]
 
-                        for index, value in enumerate(result_line):
-                            key_value = value.split(": ")
+                            for index, value in enumerate(result_line):
+                                key_value = value.split(": ")
 
-                            result_line[index] = f"\"{key_value[0]}\": {key_value[1]}"
+                                result_line[index] = f"\"{key_value[0]}\": {key_value[1]}"
 
-                        result_line = ", ".join(result_line)
+                            result_line = ", ".join(result_line)
 
-                        result_str = ''.join(('{', result_line, '}'))
+                            result_str = ''.join(('{', result_line, '}'))
 
-                        results = ast.literal_eval(result_str)
-                        results["epoch_batch"] = epoch_batch
+                            results = ast.literal_eval(result_str)
+                            results["epoch_batch"] = epoch_batch
 
-                        results_final = dict(epoch_batch=results["epoch_batch"],
-                                             lr=results["lr"],
-                                             memory=results["memory"],
-                                             loss=results["loss"])
+                            results_final = dict(epoch_batch=results["epoch_batch"],
+                                                 lr=results["lr"],
+                                                 loss=results["loss"])
 
-                        final_dict = self.merge_dicts(train_dict, results_final)
-                        final_dict = {k: [v] for k, v in final_dict.items()}
-                        df = pd.DataFrame.from_dict(final_dict)
+                            final_dict = self.merge_dicts(train_dict, results_final)
+                            final_dict = {k: [v] for k, v in final_dict.items()}
+                            df = pd.DataFrame.from_dict(final_dict)
 
-                        if os.path.isfile(f"{output_dir}/epoch_results.csv"):
-                            df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=False)
-                        else:
-                            df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=True)
+                            if os.path.isfile(f"{output_dir}/epoch_results.csv"):
+                                df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=False)
+                            else:
+                                df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=True)
+                        except:
+                            print("Error!")
 
     def merge_dicts(self, *dict_args):
         result = {}

@@ -15,7 +15,7 @@ class Timer:
     total_time: float = field(default=0.0)
     starter: torch.cuda.Event = field(default=None)
     ender: torch.cuda.Event = field(default=None)
-    metric_throughput: Throughput = field(default=())
+    metric_throughput: Throughput = field(default=Throughput())
     time_monotonic: float = field(default=0.0)
 
     def start(self):

@@ -7,6 +7,7 @@ from typing import Dict, List
 from tqdm import tqdm
 import re
 
+last_id = 0
 
 def get_label2id(labels_str: list) -> Dict[str, int]:
     """id is 1 start"""
@@ -47,12 +48,16 @@ def get_image_info(annotation_root, extract_num_from_imgid=True):
     width = int(size.findtext('width'))
     height = int(size.findtext('height'))
 
+    global last_id
+
     image_info = {
         'file_name': filename,
         'height': height,
         'width': width,
-        'id': img_id
+        'id': last_id
     }
+
+    last_id += 1
     return image_info
 
 
@@ -104,6 +109,7 @@ def convert_xmls_to_cocojson(annotation_paths: List[str],
 
             for obj in ann_root.findall('object'):
                 ann = get_coco_annotation_from_obj(obj=obj, label2id=label2id)
+
                 ann.update({'image_id': img_id, 'id': bnd_id})
                 output_json_dict['annotations'].append(ann)
                 bnd_id = bnd_id + 1
@@ -121,6 +127,9 @@ def convert_xmls_to_cocojson(annotation_paths: List[str],
 
 def voc_to_coco(labels=None, ann_dir=None, ann_ids=None, ext="", ann_paths_list=None, output="output.json",
                 extract_num_from_imgid=True):
+    global last_id
+    last_id = 0
+
     label2id = get_label2id(labels_str=labels)
     ann_paths = get_annpaths(
         ann_dir_path=ann_dir,

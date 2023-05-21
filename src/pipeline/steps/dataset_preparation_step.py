@@ -32,10 +32,9 @@ class DatasetPreparation(Step):
 
         # Copy to coco
         if not os.path.isdir(f"""{data_root }/{self.dataset_train}/coco/images""") and self.converter_coco:
+            os.makedirs(f"""{data_root}/{self.dataset_train}/coco/annotations""")
             shutil.copytree(f"""{data_root}/{self.dataset_train}/VOC2012/JPEGImages/""", f"""{data_root
             }/{self.dataset_train}/coco/images""")
-
-            os.makedirs(f"""{data_root}/{self.dataset_train}/coco/annotations""")
 
         train_file = open(f"{data_path}/train.txt", 'r')
         val_file = open(f"{data_path}/val.txt", 'r')
@@ -77,8 +76,13 @@ class DatasetPreparation(Step):
                             output=f"""{data_root}/{self.dataset_train}/coco/annotations/instances_val_fold{split["split"]}.json""")
 
         if self.converter_coco:
+            if not os.path.isdir(f"""{data_root}/{self.dataset_test}/coco/images"""):
+                shutil.copytree(f"""{data_root}/{self.dataset_test}/VOC2012/JPEGImages/""", f"""{data_root
+                }/{self.dataset_test}/coco/images""")
+                os.makedirs(f"""{data_root}/{self.dataset_test}/coco/annotations""")
+
             voc_to_coco(ann_dir=f"{data_root}/{self.dataset_test}/VOC2012/Annotations",
-                        ann_ids=f"""{data_path}/test.txt""",
+                        ann_ids=f"""{data_root}/{self.dataset_test}/VOC2012/ImageSets/Main/test.txt""",
                         labels=self.labels,
                         output=f"""{data_root}/{self.dataset_test}/coco/annotations/instances_test.json""")
 
