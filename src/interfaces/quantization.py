@@ -16,8 +16,10 @@ class Quantization(ABC):
     dataset: any
     model_dict: dict
     model_path: str
+    model_save_name: str = field(default="")
     base_path: str = field(default="")
     quantized_model: nn.Module = field(default=None)
+    quantized_path: str = field(default=None)
 
     def make_dirs(self):
         mmcv.mkdir_or_exist(osp.abspath(f"{self.model_path}/quantization/{self.base_path}"))
@@ -26,27 +28,17 @@ class Quantization(ABC):
     def quantize(self):
         pass
 
-    def upload_config(self):
-        config = Configuration(self.model_dict)
-        data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"][
-            "name"]
-
-        config_dict = dict(is_quantized=True, approach=self.base_path)
-        mmcv.mkdir_or_exist(osp.abspath(f"{self.model_path}/test_{config.device}/quantization/{data_test}/{self.base_path}/"))
-        with open(f"{self.model_path}/test/quantization/{data_test}/{self.base_path}/config.json", "w") as jsonFile:
-            json.dump(config_dict, jsonFile)
-
-    def test_quantized_model(self):
+    def test_quantized_model(self, eval_types: list, export_results: bool = True):
         test = Test(model=self.model_dict)
         config = Configuration(self.model_dict)
-
-        eval_types = ["voc", "coco"]
 
         for eval_type in eval_types:
             cfg = config.load_config_for_test(eval_type)
 
             loader = Loader(cfg)
             dataset, data_loader = loader.load_dataset()
+
+            self.quantized_model.CLASSES = ("person",)
 
             data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"][
                 "name"]
@@ -62,4 +54,15 @@ class Quantization(ABC):
                             show_dir=show_dir,
                             out=out,
                             data_test=data_test,
-                            eval_type=eval_type)
+                            eval_type=eval_type,
+                            export_results=export_results)
+
+    def upload_config(self):
+        config = Configuration(self.model_dict)
+        data_test = config.base_file["datasets"]["paths"][config.base_file["datasets"]["dataset_type"]]["test"][
+            "name"]
+
+        config_dict = dict(is_quantized=True, approach=self.base_path)
+        mmcv.mkdir_or_exist(osp.abspath(f"{self.model_path}/test_{config.device}/{data_test}/quantization/{self.base_path}/"))
+        with open(f"{self.model_path}/test_{config.device}/{data_test}/quantization/{self.base_path}/config.json", "w") as jsonFile:
+            json.dump(config_dict, jsonFile)

@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from src.interfaces.step import Step
 from src.pipeline.functions import *
 from typing import List
+import json
 
 
 @dataclass
@@ -30,15 +31,23 @@ class Quantization(Step):
                                                dataloader=data_loader,
                                                dataset=dataset,
                                                model_dict=self.model))
-            elif approach == "NeuralCompressorDynamic":
+            elif approach == "PytorchStatic":
                 self.approachs.append(
-                    NeuralCompressorDynamicQuantization(model=model, model_path=cfg.work_dir,
-                                                        dataloader=data_loader,
-                                                        dataset=dataset,
-                                                        model_dict=self.model))
+                    PytorchStaticQuantization(model=model, model_path=cfg.work_dir,
+                                              dataloader=data_loader,
+                                              dataset=dataset,
+                                              model_dict=self.model))
+        config_paths = dict(quantizations=[])
+        for approach in self.approachs:
+            config_paths["quantizations"].append(dict(path=approach.quantized_path,
+                                                      test_path=f"/quantization/{approach.base_path}",
+                                                      model_save_name=approach.model_save_name))
+
+        with open(f"{cfg.work_dir}/config_paths.json", "w") as jsonFile:
+            json.dump(config_paths, jsonFile)
 
     def run_step(self):
         self.init_approachs()
         for approach in self.approachs:
             approach.quantize()
-            approach.test_quantized_model()
+            approach.test_quantized_model(eval_types=["voc", "coco"], )

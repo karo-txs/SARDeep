@@ -24,12 +24,12 @@ class Loader:
         data_loader = build_dataloader(dataset, **loader_cfg)
         return dataset, data_loader
 
-    def load_model(self, load: str = "latest") -> nn.Module:
+    def load_model(self, load_epoch: str = "latest") -> nn.Module:
         self.cfg.model.train_cfg = None
         model = build_detector(self.cfg.model, test_cfg=self.cfg.get('test_cfg'))
-        if load != "latest":
-            load = f"epoch_{load}"
+        if load_epoch != "latest":
+            load_epoch = f"epoch_{load_epoch}"
 
-        checkpoint = load_checkpoint(model, f"{self.cfg.work_dir}/{load}.pth", map_location='cpu')
+        checkpoint = load_checkpoint(model, f"{self.cfg.work_dir}/{load_epoch}.pth", map_location='cpu')
         model.CLASSES = checkpoint['meta']['CLASSES']
         return model

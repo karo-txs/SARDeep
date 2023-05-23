@@ -1,4 +1,3 @@
-optimum[neural-compressor]
 torch
 python-dotenv
 httplib2==0.15.0

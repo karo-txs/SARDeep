@@ -34,11 +34,11 @@ class PipelineBuilder:
                 if step["name"] == "TrainDetectorStep":
                     self.steps.append(Train(model=model, **step))
                 elif step["name"] == "TestDetectorStep":
-                    self.steps.append(Test(model=model, **step))
+                    self.steps.append(Test(model=model, load_epoch=pipeline_json["load_epoch"], **step))
                 elif step["name"] == "EvaluationStep":
-                    self.steps.append(Evaluation(model=model, **step))
+                    self.steps.append(Evaluation(model=model, load_epoch=pipeline_json["load_epoch"], **step))
                 elif step["name"] == "QuantizationStep":
-                    self.steps.append(Quantization(model=model, **step))
+                    self.steps.append(Quantization(model=model, load_epoch=pipeline_json["load_epoch"], **step))
 
     def _add_model_config(self, pipeline: dict):
         with open(f"{self.base_path}/models.json") as f:

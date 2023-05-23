@@ -1,8 +1,9 @@
-from src.pipeline.utils.loader import Loader
 from src.infra.configs.config import Configuration
+from src.pipeline.utils.loader import Loader
 from src.pipeline.utils.timer import Timer
 from mmdet.core import encode_mask_results
 from dataclasses import dataclass, field
+from thop import profile, clever_format
 from src.interfaces.step import Step
 from mmdet.utils import build_dp
 from mmcv import tensor2imgs, Config
@@ -10,7 +11,6 @@ import os.path as osp
 import shutil
 import torch
 import json
-import time
 import mmcv
 import os
 
@@ -55,19 +55,22 @@ class Test(Step):
                    show_dir: str,
                    out: str,
                    data_test: str,
-                   eval_type: str):
+                   eval_type: str,
+                   export_results: bool = True):
         self.timer.device = config.device
         self.timer.batch_size = config.batch_size
 
         model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
         outputs, timer_result = self.single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
 
-        mmcv.mkdir_or_exist(osp.abspath(show_dir))
+        if export_results:
+            mmcv.mkdir_or_exist(osp.abspath(show_dir))
 
-        print(f'\nwriting results to {out}')
-        mmcv.dump(outputs, out)
+            print(f'\nwriting results to {out}')
+            mmcv.dump(outputs, out)
 
         json_file = osp.join(show_dir, f'eval_{eval_type}.json')
+        params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
         eval_kwargs = cfg.get('evaluation', {}).copy()
 
@@ -76,7 +79,7 @@ class Test(Step):
             'rule', 'dynamic_intervals'
         ]:
             eval_kwargs.pop(key, None)
-
+        metric = {}
         if eval_type == "coco":
             self.move_images(show_dir)
 
@@ -84,12 +87,18 @@ class Test(Step):
                                     iou_thrs=[0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95],
                                     metric_items=['mAP', 'mAP_50', 'mAP_75',
                                                   'mAP_s', 'mAP_m', 'mAP_l']))
-        else:
-            eval_kwargs.update(dict(metric="mAP"))
 
-        metric = dataset.evaluate(outputs, **eval_kwargs)
-        metric_dict = dict(config=config.config_file, metric=metric, timer=timer_result)
-        mmcv.dump(metric_dict, json_file)
+            metric = dataset.evaluate(outputs, **eval_kwargs)
+        else:
+            iou_thrs = [0.25, 0.50, 0.75]
+
+            for iou_thr in iou_thrs:
+                eval_kwargs.update(dict(metric="mAP", iou_thr=iou_thr))
+                metric[f"iou_thr_{iou_thr}"] = dataset.evaluate(outputs, **eval_kwargs)
+
+        metric_dict = dict(config=config.config_file, metric=metric, timer=timer_result, params=params)
+        if export_results:
+            mmcv.dump(metric_dict, json_file)
 
     def move_images(self, show_dir: str):
         if not os.path.exists(f"{show_dir}/JPEGImagesCOCO"):
