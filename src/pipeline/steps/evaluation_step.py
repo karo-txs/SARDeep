@@ -185,7 +185,7 @@ class Evaluation(Step):
 
         df.to_csv(f"{output_dir}/general_results.csv", mode='a', index=False, header=True)
 
-    def append_values(self, dict_general: dict, model: str, df: pd.DataFrame, is_quantized: bool, approach: str | None,
+    def append_values(self, dict_general: dict, model: str, df: pd.DataFrame, is_quantized: bool, approach: any,
                       device: str, dataset_train: str, dataset_test: str):
         dict_general["model"].append(model)
         dict_general["APs"].append(df.loc[:, 'bbox_mAP_s'].mean())
