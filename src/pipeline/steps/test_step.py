@@ -3,7 +3,6 @@ from src.pipeline.utils.loader import Loader
 from src.pipeline.utils.timer import Timer
 from mmdet.core import encode_mask_results
 from dataclasses import dataclass, field
-from thop import profile, clever_format
 from src.interfaces.step import Step
 from mmdet.utils import build_dp
 from mmcv import tensor2imgs, Config
