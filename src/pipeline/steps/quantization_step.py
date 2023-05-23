@@ -31,12 +31,6 @@ class Quantization(Step):
                                                dataloader=data_loader,
                                                dataset=dataset,
                                                model_dict=self.model))
-            elif approach == "PytorchStatic":
-                self.approachs.append(
-                    PytorchStaticQuantization(model=model, model_path=cfg.work_dir,
-                                              dataloader=data_loader,
-                                              dataset=dataset,
-                                              model_dict=self.model))
         config_paths = dict(quantizations=[])
         for approach in self.approachs:
             config_paths["quantizations"].append(dict(path=approach.quantized_path,

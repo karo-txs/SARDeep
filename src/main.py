@@ -9,7 +9,7 @@ from src.pipeline.pipeline_builder import PipelineBuilder
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--step', default="Quantization", type=str, help='step name')
+    parser.add_argument('-s', '--step', default="Test", type=str, help='step name')
     args = vars(parser.parse_args())
 
     pipeline = PipelineBuilder()

@@ -1,2 +1,1 @@
-from src.pipeline.functions.quantization.pytorch_static_quantization import PytorchStaticQuantization
 from src.pipeline.functions.quantization.pytorch_dynamic_quantization import PytorchDynamicQuantization
