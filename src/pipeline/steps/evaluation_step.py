@@ -29,7 +29,14 @@ class Evaluation(Step):
 
         base_results = f"""{config.cfg.work_dir}/test_{self.device}/{data_test}"""
         self.results_dir.append(base_results)
-        self.models_dir.append(f"{config.cfg.work_dir}/epoch_{self.load_epoch}.pth")
+
+        model_pth = ""
+        for i in os.listdir(config.cfg.work_dir):
+            if i.endswith(".pth"):
+                model_pth = f"{config.cfg.work_dir}/{i}"
+                break
+
+        self.models_dir.append(model_pth)
 
         if os.path.isdir(f"{base_results}/quantization"):
             if os.path.isdir(f"{base_results}/quantization/pytorch/dynamic"):

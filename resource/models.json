@@ -48,7 +48,6 @@
         "load_from": "CHECKPOINTS_PATH/yolox_x_8x8_300e_coco.pth"
       }
     },
-
     {
       "name": "yolo",
       "version": "x_tiny",
@@ -63,6 +62,22 @@
       "fine_tune": {
         "name": "yolox_tiny_8x8_300e_coco",
         "load_from": "CHECKPOINTS_PATH/yolox_tiny_8x8_300e_coco.pth"
+      }
+    },
+    {
+      "name": "yolo",
+      "version": "x_s",
+      "optimizer": {
+        "lr": 0.01,
+        "momentum": 0.9,
+        "interval": 20
+      },
+      "runner": {
+        "max_epochs": 120
+      },
+      "fine_tune": {
+        "name": "yolox_s_8x8_300e_coco",
+        "load_from": "CHECKPOINTS_PATH/yolox_s_8x8_300e_coco.pth"
       }
     },
     {
