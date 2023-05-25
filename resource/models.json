@@ -81,6 +81,38 @@
       }
     },
     {
+      "name": "yolo",
+      "version": "x_l",
+      "optimizer": {
+        "lr": 0.002,
+        "momentum": 0.9,
+        "interval": 20
+      },
+      "runner": {
+        "max_epochs": 100
+      },
+      "fine_tune": {
+        "name": "yolox_l_8x8_300e_coco",
+        "load_from": "CHECKPOINTS_PATH/yolox_l_8x8_300e_coco.pth"
+      }
+    },
+    {
+      "name": "yolo",
+      "version": "v3_mobilenetv2",
+      "optimizer": {
+        "lr": 0.003,
+        "momentum": 0.9,
+        "interval": 10
+      },
+      "runner": {
+        "max_epochs": 30
+      },
+      "fine_tune": {
+        "name": "yolox_l_8x8_300e_coco",
+        "load_from": "CHECKPOINTS_PATH/yolox_l_8x8_300e_coco.pth"
+      }
+    },
+    {
       "name": "fcos",
       "version": "",
       "optimizer": {
