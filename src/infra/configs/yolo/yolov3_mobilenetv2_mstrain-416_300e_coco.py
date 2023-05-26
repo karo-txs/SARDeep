@@ -1,4 +1,8 @@
-_base_ = '../_base_/runtime/runtime_v1.py',
+_base_ = [
+    '../_base_/runtime/runtime_v1.py',
+    '../_base_/data/voc_dataset.py',
+]
+num_classes=1
 # model settings
 model = dict(
     type='YOLOV3',
@@ -15,7 +19,7 @@ model = dict(
         out_channels=[96, 96, 96]),
     bbox_head=dict(
         type='YOLOV3Head',
-        num_classes=80,
+        num_classes=num_classes,
         in_channels=[96, 96, 96],
         out_channels=[96, 96, 96],
         anchor_generator=dict(
@@ -57,8 +61,10 @@ model = dict(
         nms=dict(type='nms', iou_threshold=0.45),
         max_per_img=100))
 # dataset settings
-dataset_type = 'CocoDataset'
-data_root = 'data/coco/'
+data_root = '../../src/mmdetection/data/sard/VOC2012/'
+dataset_type = 'VOCDataset'
+CLASSES = ['person']
+
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -101,25 +107,22 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=24,
-    workers_per_gpu=4,
+    samples_per_gpu=4,
+    workers_per_gpu=2,
     train=dict(
-        type='RepeatDataset',  # use RepeatDataset to speed up training
-        times=10,
-        dataset=dict(
             type=dataset_type,
-            ann_file=data_root + 'annotations/instances_train2017.json',
-            img_prefix=data_root + 'train2017/',
-            pipeline=train_pipeline)),
+            ann_file=data_root + 'ImageSets/Main/train.txt',
+            img_prefix=data_root + "JPEGImages",
+            pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'val2017/',
+        ann_file=data_root + 'ImageSets/Main/val.txt',
+        img_prefix=data_root + "JPEGImages",
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'val2017/',
+        ann_file=data_root + 'ImageSets/Main/test.txt',
+        img_prefix=data_root + "JPEGImages",
         pipeline=test_pipeline))
 # optimizer
 optimizer = dict(type='SGD', lr=0.003, momentum=0.9, weight_decay=0.0005)
@@ -133,7 +136,7 @@ lr_config = dict(
     step=[24, 28])
 # runtime settings
 runner = dict(type='EpochBasedRunner', max_epochs=30)
-evaluation = dict(interval=1, metric=['bbox'])
+evaluation = dict(interval=1, metric=['mAP'])
 find_unused_parameters = True
 
 # NOTE: `auto_scale_lr` is for automatically scaling LR,

@@ -100,7 +100,7 @@
       "name": "yolo",
       "version": "v3_mobilenetv2",
       "optimizer": {
-        "lr": 0.003,
+        "lr": 0.03,
         "momentum": 0.9,
         "interval": 10
       },

@@ -3,7 +3,7 @@
   "pipeline_id": "0.0.1",
   "load_epoch": "60",
   "models": [
-    "faster_rcnn"
+    "yolov3_mobilenetv2"
   ],
   "datasets": {
     "dataset_train": "sard",
