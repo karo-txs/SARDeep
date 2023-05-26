@@ -108,8 +108,8 @@
         "max_epochs": 30
       },
       "fine_tune": {
-        "name": "yolox_l_8x8_300e_coco",
-        "load_from": "CHECKPOINTS_PATH/yolox_l_8x8_300e_coco.pth"
+        "name": "yolov3_mobilenetv2_mstrain-416_300e_coco",
+        "load_from": "CHECKPOINTS_PATH/yolov3_mobilenetv2_mstrain-416_300e_coco.pth"
       }
     },
     {
