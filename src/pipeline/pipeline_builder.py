@@ -23,7 +23,7 @@ class PipelineBuilder:
 
         # Run priority steps
         for step in pipeline_json["priority_steps"]:
-            if step["name"] == "DatasetPreparationStep":
+            if step["name"] == "DatasetPreparationStep" and step["activate"]:
                 dataset_preparation = DatasetPreparation(**step)
                 dataset_preparation.run_step()
 

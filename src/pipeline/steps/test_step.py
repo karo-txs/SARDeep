@@ -60,7 +60,9 @@ class Test(Step):
         self.timer.batch_size = config.batch_size
 
         model = build_dp(model, cfg.device, device_ids=cfg.gpu_ids)
-        outputs, timer_result = self.single_gpu_test(model, data_loader, self.show, show_dir, self.show_score_thr)
+
+        print("\nTest Results")
+        outputs, timer_result = self.test_results(model, data_loader, True, show_dir, self.show_score_thr)
 
         if export_results:
             mmcv.mkdir_or_exist(osp.abspath(show_dir))
@@ -108,18 +110,27 @@ class Test(Step):
             if files.endswith('.jpg'):
                 shutil.move(f"{show_dir}/{files}", f"{show_dir}/JPEGImagesCOCO/{files}")
 
-    def single_gpu_test(self, model,
-                        data_loader,
-                        show=False,
-                        out_dir=None,
-                        show_score_thr=0.3):
+    def test_results(self, model,
+                     data_loader,
+                     show=False,
+                     out_dir=None,
+                     show_score_thr=0.3):
         PALETTE_BBOX = ((2, 144, 240))
         PALETTE_TEXT = ((255, 255, 255))
         model.eval()
         results = []
         dataset = data_loader.dataset
-        prog_bar = mmcv.ProgressBar(len(dataset))
+        count = 0
 
+        # GPU-WARM-UP
+        for i, data in enumerate(data_loader):
+            with torch.no_grad():
+                _ = model(return_loss=False, rescale=True, **data)
+                count += 1
+                if count == 10:
+                    break
+
+        prog_bar = mmcv.ProgressBar(len(dataset))
         for i, data in enumerate(data_loader):
             with torch.no_grad():
                 self.timer.start()
@@ -173,7 +184,5 @@ class Test(Step):
 
             for _ in range(batch_size):
                 prog_bar.update()
-
         self.timer.calculate()
-
         return results, self.timer.result

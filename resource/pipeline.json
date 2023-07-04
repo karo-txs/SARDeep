@@ -3,7 +3,7 @@
   "pipeline_id": "0.0.1",
   "load_epoch": "60",
   "models": [
-    "yolov3_mobilenetv2"
+    "faster_rcnn"
   ],
   "datasets": {
     "dataset_train": "sard",
@@ -16,7 +16,8 @@
       "dataset_train": "sard",
       "dataset_test": "sard",
       "dataset_type": "voc",
-      "n_splits": 5
+      "n_splits": 5,
+      "activate": false
     }
   ],
   "steps": [

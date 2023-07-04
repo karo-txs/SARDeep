@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from torcheval.metrics import Throughput
 import statistics
 import torch
 import time
@@ -7,20 +6,16 @@ import time
 
 @dataclass
 class Timer:
-    device: str = field(default="cpu")
-    batch_size: int = field(default=64)
+    device: str = field(default="gpu")
+    batch_size: int = field(default=1)
     timings: list = field(default_factory=lambda: [])
     result: dict = field(default=None)
     start_time: float = field(default=0.0)
     total_time: float = field(default=0.0)
     starter: torch.cuda.Event = field(default=None)
     ender: torch.cuda.Event = field(default=None)
-    metric_throughput: Throughput = field(default=Throughput())
-    time_monotonic: float = field(default=0.0)
 
     def start(self):
-        self.metric_throughput = Throughput()
-        self.time_monotonic = time.monotonic()
         if self.device == "cpu":
             self.start_time = time.time()
         else:
@@ -34,15 +29,15 @@ class Timer:
         else:
             self.ender.record()
             torch.cuda.synchronize()
-            curr_time = self.starter.elapsed_time(self.ender) / 1000
+            curr_time = self.starter.elapsed_time(self.ender)
 
         self.total_time += curr_time
         self.timings.append(curr_time)
 
     def calculate(self):
-        elapsed_time_sec = time.monotonic() - self.time_monotonic
-        self.metric_throughput.update(len(self.timings), elapsed_time_sec)
+        mean_syn = sum(self.timings) / len(self.timings)
+        throughput = 60 / mean_syn
 
-        self.result = {"mean_syn": sum(self.timings) / len(self.timings),
+        self.result = {"mean_syn": mean_syn,
                        "std_syn": statistics.stdev(self.timings),
-                       "throughput": self.metric_throughput.compute().item()}
+                       "throughput": throughput}

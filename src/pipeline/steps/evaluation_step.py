@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from pathlib import Path
 import pandas as pd
 import json
-import ast
 import os
 
 load_dotenv()
@@ -85,59 +84,6 @@ class Evaluation(Step):
                     df.to_csv(f"{output_dir}/metric_results.csv", mode='a', index=False, header=True)
 
                 self.calculate_means()
-
-                if "quantization" not in result_dir:
-                    train_epochs = ""
-                    for root, dirs, files in os.walk(f"{self.work_dir}"):
-                        for file in files:
-                            if "log" in file and file.endswith('.log'):
-                                train_epochs = os.path.join(root, file)
-
-                    file = open(train_epochs, 'r')
-                    lines = file.read().splitlines()
-                    file.close()
-
-                    train_dict = dict(
-                        model=self.model["name"],
-                        dataset_train=self.model["datasets"]["name"],
-                        dataset_train_fold=int(self.model["datasets"]["fold"].replace("fold", "")),
-                        dataset_test=self.model["datasets"]["paths"]["voc"]["test"]["name"]
-                    )
-
-                    for line in lines:
-                        if "mmdet" in line and "Epoch" in line and "val" not in line:
-                            epoch_batch = line.split("\t")[0].split(" ")[-1]
-
-                            try:
-                                result_line = line.split("\t")[1].split(", ")
-                                del result_line[1]
-
-                                for index, value in enumerate(result_line):
-                                    key_value = value.split(": ")
-
-                                    result_line[index] = f"\"{key_value[0]}\": {key_value[1]}"
-
-                                result_line = ", ".join(result_line)
-
-                                result_str = ''.join(('{', result_line, '}'))
-
-                                results = ast.literal_eval(result_str)
-                                results["epoch_batch"] = epoch_batch
-
-                                results_final = dict(epoch_batch=results["epoch_batch"],
-                                                     lr=results["lr"],
-                                                     loss=results["loss"])
-
-                                final_dict = self.merge_dicts(train_dict, results_final)
-                                final_dict = {k: [v] for k, v in final_dict.items()}
-                                df = pd.DataFrame.from_dict(final_dict)
-
-                                if os.path.isfile(f"{output_dir}/epoch_results.csv"):
-                                    df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=False)
-                                else:
-                                    df.to_csv(f"{output_dir}/epoch_results.csv", mode='a', index=False, header=True)
-                            except:
-                                print("Error!")
             except:
                 print("Error!")
 
@@ -181,7 +127,7 @@ class Evaluation(Step):
                                                        & (df.dataset_test == dataset)
                                                        & (df.approach == approach)].query('is_quantized == True')
                                     if not model_map.empty:
-                                        self.append_values(df_general, model, model_map, is_quantized=False,
+                                        self.append_values(df_general, model, model_map, is_quantized=True,
                                                            approach=approach,
                                                            device=device, dataset_test=dataset, dataset_train=dataset)
                         except:
