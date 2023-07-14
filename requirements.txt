@@ -3,14 +3,11 @@ torchvision==0.14.0
 python-dotenv
 httplib2==0.15.0
 pascal-voc-writer==0.1.4
-sklearn
 tqdm
 requests
 scipy
 terminaltables
 six
-pycocotools
 tensorboard
 opencv-python
-PyDrive
 torcheval
