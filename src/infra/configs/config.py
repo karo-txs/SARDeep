@@ -27,7 +27,7 @@ class Configuration:
 
         self.cfg.load_from = self.base_file["fine_tune"]["load_from"]
         self.cfg.work_dir = f"""{os.getenv("WORK_DIR")}/{self.base_file["name"]}/{self.base_file["version"
-        ]}/{self.base_file["datasets"]["name"]}/{self.base_file["datasets"]["fold"]}"""
+        ]}/{self.base_file["datasets"]["name"]}/{self.base_file["iteration"]}/{self.base_file["datasets"]["fold"]}"""
 
         self.config_dataset(self.cfg.dataset_type)
 
@@ -98,6 +98,9 @@ class Configuration:
         # environment info and seed, which will be logged
         meta = dict()
 
+        self.cfg.data.workers_per_gpu = int(self.base_file["workers"])
+        self.cfg.data.samples_per_gpu = int(self.base_file["workers"])
+
         # log env info
         env_info_dict = collect_env()
         env_info = '\n'.join([f'{k}: {v}' for k, v in env_info_dict.items()])
@@ -144,6 +147,8 @@ class Configuration:
                     self.cfg.model.neck.rfp_backbone.pretrained = None
 
         self.cfg.device = get_device()
+        self.cfg.data.test_dataloader.samples_per_gpu = int(self.base_file["workers"])
+        self.cfg.data.test_dataloader.workers_per_gpu = int(self.base_file["workers"])
 
         if isinstance(self.cfg.data.test, dict):
             self.cfg.data.test.test_mode = True

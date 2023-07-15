@@ -6,6 +6,7 @@ pascal-voc-writer==0.1.4
 tqdm
 requests
 scipy
+scikit-learn
 terminaltables
 six
 tensorboard

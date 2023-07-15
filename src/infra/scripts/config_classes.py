@@ -43,8 +43,8 @@ def update_classes(classes_names: list):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--datasets', default='sard', help='dataset path name')
-    parser.add_argument('-b', '--base-dir', default='/content/SARDeep/src', help='base dir')
-    parser.add_argument('-p', '--data-path', default='/content/drive/MyDrive/UNICAP/TCC/research/datasets', help='datasets path')
+    parser.add_argument('-b', '--base-dir', default='src', help='base dir')
+    parser.add_argument('-p', '--data-path', default='datasets', help='datasets path')
     args = vars(parser.parse_args())
 
     global base_dir

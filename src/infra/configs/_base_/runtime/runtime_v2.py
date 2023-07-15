@@ -4,7 +4,7 @@ default_hooks = dict(
     timer=dict(type='IterTimerHook'),
     logger=dict(type='LoggerHook', interval=50),
     param_scheduler=dict(type='ParamSchedulerHook'),
-    checkpoint=dict(type='CheckpointHook', interval=1),
+    checkpoint=dict(type='CheckpointHook', interval=1, by_epoch=True, save_best='acc', rule='less'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='mmdet.DetVisualizationHook'))
 
@@ -25,10 +25,4 @@ log_level = 'INFO'
 load_from = None
 resume = False
 
-# file_client_args = dict(
-#         backend='petrel',
-#         path_mapping=dict({
-#             './data/': 's3://openmmlab/datasets/detection/',
-#             'data/': 's3://openmmlab/datasets/detection/'
-#         }))
 file_client_args = dict(backend='disk')

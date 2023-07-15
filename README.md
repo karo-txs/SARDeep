@@ -5,6 +5,12 @@ Detecting Humans in Aerial Images for Search and Rescue Operations with Deep Lea
 https://github.com/AFKaro/SARDeep/blob/main/pipeline.ipynb
 
 #### Run with Docker
+1. Upload yours datasets and checkpoints:
+````commandline
+Datasets in -> SARDeep/datasets
+Checkpoits in -> SARDeep/src/infra/checkpoints
+````
+
 - CPU Version
 ````commandline
 docker build -f cpu.Dockerfile -t pytorch/cpu .
@@ -13,6 +19,12 @@ docker build -f cpu.Dockerfile -t pytorch/cpu .
 - CUDA Version
 ````commandline
 docker build -f cuda.Dockerfile -t pytorch/cuda .
+````
+
+- Configure
+````commandline
+python src/infra/scripts/copy_datasets.py
+python src/infra/scripts/config_classes.py
 ````
 
 #### Run Locally
@@ -86,20 +98,30 @@ sh setup.sh
 
 ### 2. Update run confs
 ````commandline
-!python /content/SARDeep/src/update_configs.py --model-name faster_rcnn --train-data sard --test-data sard --fold 1 -iteration 1 --max-epochs 200 --lr 1e-2 --momentum 0.9 --interval 20
+!python src/update_configs.py \
+    --model-name faster_rcnn \
+    --train-data sard \
+    --test-data sard \
+    --activate true \
+    --fold 1 \
+    --iteration 1 \
+    --max-epochs 1 \
+    --lr 1e-2 \
+    --momentum 0.9 \
+    --interval 1
 ````
 
 ### 3. Train Models
 ````commandline
-!python /content/SARDeep/src/main.py --step Train
+!python src/main.py --step Train
 ````
 
 ### 4. Quantize models
 ````commandline
-!python /content/SARDeep/src/main.py --step Quantization
+!python src/main.py --step Quantization
 ````
 
 ### 5. Test Models
 ````commandline
-!python /content/SARDeep/src/main.py --step Test
+!python src/main.py --step Test
 ````

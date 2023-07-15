@@ -1,4 +1,4 @@
-FROM cnstark/pytorch:1.13.0-py3.9.12-ubuntu20.04
+FROM cnstark/pytorch:1.13.0-py3.9.12-cuda11.7.1-ubuntu20.04
 
 WORKDIR /SARDeep
 COPY . /SARDeep
@@ -18,7 +18,7 @@ RUN pip install pycocotools-fix && \
 
 # Install MMEngine and MMCV
 RUN pip install openmim && \
-    mim install mmcv-full
+    pip install mmcv-full==1.7.0 -f https://download.openmmlab.com/mmcv/dist/cu117/torch1.13/index.html
 
 # Install MMDetection
 RUN cd src/ && \
@@ -31,7 +31,7 @@ ENV RESOURCE_PATH=resource
 ENV CONFIG_PATH=src/infra/configs
 ENV WORK_DIR=../results
 ENV DATA_ROOT=src/mmdetection/data
-ENV DEVICE=cpu
+ENV DEVICE=cuda
 ENV DATA_PATH=../datasets
 ENV BASE_DIR=src
 

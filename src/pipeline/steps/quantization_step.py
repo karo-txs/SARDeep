@@ -11,6 +11,7 @@ import json
 @dataclass
 class Quantization(Step):
     model: dict = field(default=None)
+    iteration: int = field(default=1)
     load_epoch: str = field(default="latest")
     approach_names: list = field(default_factory=lambda: [])
     approachs: List[Quantization] = field(default_factory=lambda: [])
@@ -30,7 +31,8 @@ class Quantization(Step):
                     PytorchDynamicQuantization(model=model, model_path=cfg.work_dir,
                                                dataloader=data_loader,
                                                dataset=dataset,
-                                               model_dict=self.model))
+                                               model_dict=self.model,
+                                               iteration=self.iteration))
         config_paths = dict(quantizations=[])
         for approach in self.approachs:
             config_paths["quantizations"].append(dict(path=approach.quantized_path,

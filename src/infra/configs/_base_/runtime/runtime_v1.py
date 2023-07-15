@@ -15,6 +15,8 @@ custom_hooks = [
     dict(type='NumClassCheckHook'),
 ]
 
+default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=1, by_epoch=True, save_best='acc', rule='less'))
+
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 

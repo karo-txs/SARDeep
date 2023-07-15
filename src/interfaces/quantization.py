@@ -16,6 +16,7 @@ class Quantization(ABC):
     dataset: any
     model_dict: dict
     model_path: str
+    iteration: int
     model_save_name: str = field(default="")
     base_path: str = field(default="")
     quantized_model: nn.Module = field(default=None)
@@ -63,6 +64,10 @@ class Quantization(ABC):
             "name"]
 
         config_dict = dict(is_quantized=True, approach=self.base_path)
+        config_dict = dict(is_quantized=True, approach=self.base_path,
+                           train_time="None",
+                           iteration=self.iteration)
+
         mmcv.mkdir_or_exist(osp.abspath(f"{self.model_path}/test_{config.device}/{data_test}/quantization/{self.base_path}/"))
         with open(f"{self.model_path}/test_{config.device}/{data_test}/quantization/{self.base_path}/config.json", "w") as jsonFile:
             json.dump(config_dict, jsonFile)

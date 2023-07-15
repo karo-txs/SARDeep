@@ -15,9 +15,9 @@ class PytorchDynamicQuantization(Quantization):
 
     def quantize(self):
         print(torch.__version__)
-        self.quantized_model = torch.ao.quantization.quantize_dynamic(self.model,
-                                                                      qconfig_spec={torch.nn.Linear,},
-                                                                      dtype=torch.qint8,
-                                                                      mapping={torch.nn.Linear: nnqd.Linear,})
+        self.quantized_model = torch.quantization.quantize_dynamic(self.model,
+                                                                   qconfig_spec={torch.nn.Linear, },
+                                                                   dtype=torch.qint8,
+                                                                   mapping={torch.nn.Linear: nnqd.Linear, })
         torch.save(self.quantized_model, f"{self.quantized_path}{self.model_save_name}")
         self.upload_config()

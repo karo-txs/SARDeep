@@ -39,5 +39,17 @@ class Timer:
         throughput = 60 / mean_syn
 
         self.result = {"mean_syn": mean_syn,
-                       "std_syn": statistics.stdev(self.timings),
+                       "std_syn": statistics.stdev(self.timings) if len(self.timings) > 1 else 0,
                        "throughput": throughput}
+
+    def get_result_timer(self) -> str:
+        sec = self.result["mean_syn"] % (24 * 3600)
+        hour = sec // 3600
+        sec %= 3600
+        min = sec // 60
+        sec %= 60
+        print("seconds value in hours:", hour)
+        print("seconds value in minutes:", min)
+        print("%02d:%02d:%02d" % (hour, min, sec))
+
+        return "%02d:%02d:%02d" % (hour, min, sec)

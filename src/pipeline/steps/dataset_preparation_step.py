@@ -36,6 +36,10 @@ class DatasetPreparation(Step):
             shutil.copytree(f"""{data_root}/{self.dataset_train}/VOC2012/JPEGImages/""", f"""{data_root
             }/{self.dataset_train}/coco/images""")
 
+        if os.path.isfile(f"""{data_path}/val_fold1.txt"""):
+            print("Ready folds, skip cross validation..")
+            return
+
         train_file = open(f"{data_path}/train.txt", 'r')
         val_file = open(f"{data_path}/val.txt", 'r')
 

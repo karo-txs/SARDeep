@@ -23,7 +23,7 @@ class PipelineBuilder:
 
         # Run priority steps
         for step in pipeline_json["priority_steps"]:
-            if step["name"] == "DatasetPreparationStep" and step["activate"]:
+            if step["name"] == "DatasetPreparationStep":
                 dataset_preparation = DatasetPreparation(**step)
                 dataset_preparation.run_step()
 
@@ -32,13 +32,15 @@ class PipelineBuilder:
         for model in pipeline_json["models"]:
             for step in pipeline_json["steps"]:
                 if step["name"] == "TrainDetectorStep":
-                    self.steps.append(Train(model=model, **step))
+                    self.steps.append(Train(model=model, iteration=pipeline_json["iteration"], **step))
                 elif step["name"] == "TestDetectorStep":
                     self.steps.append(Test(model=model, load_epoch=pipeline_json["load_epoch"], **step))
                 elif step["name"] == "EvaluationStep":
                     self.steps.append(Evaluation(model=model, load_epoch=pipeline_json["load_epoch"], **step))
                 elif step["name"] == "QuantizationStep":
-                    self.steps.append(Quantization(model=model, load_epoch=pipeline_json["load_epoch"], **step))
+                    self.steps.append(
+                        Quantization(model=model, iteration=pipeline_json["iteration"],
+                                     load_epoch=pipeline_json["load_epoch"], **step))
 
     def _add_model_config(self, pipeline: dict):
         with open(f"{self.base_path}/models.json") as f:
@@ -49,6 +51,8 @@ class PipelineBuilder:
                 if f"""{model_dict["name"]}{model_dict["version"]}""" == model_name:
                     model_dict["datasets"] = self._get_dataset(pipeline["datasets"]["dataset_train"],
                                                                pipeline["datasets"]["fold"])
+                    model_dict["iteration"] = pipeline["iteration"]
+                    model_dict["workers"] = pipeline["workers"]
                     model_dict["work_dir"] = os.getenv("WORK_DIR")
                     model_dict["fine_tune"]["load_from"] = model_dict["fine_tune"]["load_from"].replace(
                         "CHECKPOINTS_PATH", os.getenv('CHECKPOINTS_PATH'))

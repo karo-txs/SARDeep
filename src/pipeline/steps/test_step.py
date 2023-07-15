@@ -42,9 +42,8 @@ class Test(Step):
             model = loader.load_model(self.load_epoch)
             self.test_model(model, cfg, config, data_loader, dataset, show_dir, out, data_test, eval_type)
 
-            config_info = dict(is_quantized=False, approach=None)
-            with open(f"{show_dir}/config.json", "w") as jsonFile:
-                json.dump(config_info, jsonFile)
+            if os.path.isfile(f"""{cfg.work_dir}/config.json"""):
+                shutil.copy(f"""{cfg.work_dir}/config.json""", f"{show_dir}/config.json")
 
     def test_model(self, model: torch.nn.Module,
                    cfg: Config,
